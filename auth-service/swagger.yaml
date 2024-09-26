@@ -1,0 +1,603 @@
+openapi: 3.0.0
+info:
+    version: 1.0.0
+    title: Micro builder API
+    description: "Api Docs Swagger"
+    # contact:
+    #     name: Bipon Biswas
+    #     url: https://example.com
+    #     email: support@gmail.com
+servers:
+    - url: http://localhost:5001 
+     
+    - url: http://localhost:5002
+components:
+    securitySchemes:
+        bearerAuth:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT
+    examples:
+        Unauthorized:
+            value:
+                code: "error.accountInvalid"
+                message: "Username or password invalid."
+
+    responses:
+        "Unauthorized":
+            description: "Unauthorized"
+            content:
+                application/json:
+                    schema:
+                        type: "object"
+                        example:
+                            value:
+                                code: "error.unauthorized"
+                                message: "Unauthorized."
+        "ResTrue":
+            description: Success
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        example: { data: true }
+
+paths:
+    #----- HealthCheck ----#
+    "/check":
+        get:
+            tags: [Health]
+            summary: Health Check
+            description: healthCheck
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: ok
+    #-----Auth ----#
+    #Sign-up
+    "/v1/user/sign-up":
+        post:
+            tags: [Auth]
+            summary: "Sign Up"
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: "object"
+                            properties:
+                                username:
+                                    type: "string"
+                                    pattern: "^(?=[a-zA-Z0-9\\.@_-]{6,48})([a-zA-Z0-9]([.@_-]?[a-zA-Z0-9])*)$"
+                                    example: "username"
+                                password:
+                                    type: "string"
+                                    example: "password"
+                                phoneNumber:
+                                    type: "string"
+                                    pattern: "^(?:\\+?(61))? ?(?:\\((?=.*\\)))?(0?[2-57-8])\\)? ?(\\d\\d(?:[- ](?=\\d{3})|(?!\\d\\d[- ]?\\d[- ]))\\d\\d[- ]?\\d[- ]?\\d{3})$"
+                                    example: "phoneNumber"
+                                email:
+                                    type: "string"
+                                    example: "email@yopmail.com"
+                                fullName:
+                                    type: "string"
+                                    example: "fullName"
+                                dob:
+                                    type: "string"
+                                    example: "dob"
+
+                            required:
+                                - username
+                                - password
+                                - phoneNumber
+                                - email
+                                - fullName
+
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                example:
+                                    {
+                                        username: "string",
+                                        email: "string",
+                                        phoneNumber: "string",
+                                        fullName: "string",
+                                        dob: "string",
+                                        affiliate: "string",
+                                        refAffiliate: "string",
+                                        isEmailVerified: "boolean",
+                                        isPhoneVerified: "boolean",
+                                        status: "number",
+                                        roleId: "number",
+                                        accessToken: "string",
+                                    }
+                "400":
+                    description: "Failed"
+                    content:
+                        application/json:
+                            schema:
+                                type: "object"
+                            example:
+                                - {
+                                      code: "error.usernameExisted",
+                                      message: "Username existed.",
+                                  }
+                                - {
+                                      code: "error.emailExisted",
+                                      message: "Email existed.",
+                                  }
+                                - {
+                                      code: "error.phoneNumberExisted",
+                                      message: "PhoneNumber existed.",
+                                  }
+    #Sign-in
+    "/v1/user/sign-in":
+        post:
+            summary: "Sign In"
+            tags: [Auth]
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: "object"
+                            properties:
+                                username:
+                                    type: "string"
+                                    example: "username"
+                                password:
+                                    type: "string"
+                                    example: "password"
+
+                            required:
+                                - username
+                                - password
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                example:
+                                    {
+                                        username: "string",
+                                        email: "string",
+                                        phoneNumber: "string",
+                                        fullName: "string",
+                                        dob: "string",
+                                        affiliate: "string",
+                                        refAffiliate: "string",
+                                        isEmailVerified: "boolean",
+                                        isPhoneVerified: "boolean",
+                                        status: "number",
+                                        roleId: "number",
+                                        accessToken: "string",
+                                    }
+                "400":
+                    description: "Failed"
+                    content:
+                        application/json:
+                            schema:
+                                type: "object"
+                                example:
+                                    - {
+                                          code: "error.accountInvalid",
+                                          message: "Username or password invalid.",
+                                      }
+    #Sign-out
+    "/v1/user/sign-out":
+        post:
+            tags: [Auth]
+            summary: "Sign Out"
+            security:
+                - bearerAuth: []
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: "object"
+                            properties:
+                                deviceCode:
+                                    type: "string"
+                                    example:
+                                        deviceCode: "deviceCode"
+            responses:
+                200:
+                    $ref: "#/components/responses/ResTrue"
+                401:
+                    $ref: "#/components/responses/Unauthorized"
+
+    #-----User ----#
+
+    "/v1/user/profile":
+        #Get profile
+        get:
+            tags: [User]
+            security:
+                - bearerAuth: []
+            summary: "Get user Profile"
+            responses:
+                200:
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                example:
+                                    {
+                                        username: "string",
+                                        email: "string",
+                                        phoneNumber: "string",
+                                        fullName: "string",
+                                        dob: "string",
+                                        affiliate: "string",
+                                        refAffiliate: "string",
+                                        isEmailVerified: "boolean",
+                                        isPhoneVerified: "boolean",
+                                        status: "number",
+                                        roleId: "number",
+                                    }
+                401:
+                    $ref: "#/components/responses/Unauthorized"
+
+        #Update profile
+        put:
+            tags: [User]
+            security:
+                - bearerAuth: []
+            summary: "Update user profile"
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: "object"
+                            properties:
+                                fullName:
+                                    type: "string"
+                                    example: "fullName"
+                                    minimum: 0
+                                    maximum: 64
+                                phoneNumber:
+                                    type: "string"
+                                    pattern: "^(?:\\+?(61))? ?(?:\\((?=.*\\)))?(0?[2-57-8])\\)? ?(\\d\\d(?:[- ](?=\\d{3})|(?!\\d\\d[- ]?\\d[- ]))\\d\\d[- ]?\\d[- ]?\\d{3})$"
+                                    example: "phoneNumber"
+                                email:
+                                    type: "string"
+                                    example: "email@yopmail.com"
+
+                                dob:
+                                    type: "string"
+                                    example: "dob"
+            responses:
+                200:
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                example:
+                                    {
+                                        username: "string",
+                                        email: "string",
+                                        phoneNumber: "string",
+                                        fullName: "string",
+                                        dob: "string",
+                                        affiliate: "string",
+                                        refAffiliate: "string",
+                                        isEmailVerified: "boolean",
+                                        isPhoneVerified: "boolean",
+                                        status: "number",
+                                        roleId: "number",
+                                        accessToken: "string",
+                                    }
+                400:
+                    description: "Failed"
+                    content:
+                        application/json:
+                            schema:
+                                type: "object"
+                            example:
+                                - {
+                                      code: "error.emailExisted",
+                                      message: "Email existed.",
+                                  }
+                                - {
+                                      code: "error.phoneNumberExisted",
+                                      message: "PhoneNumber existed.",
+                                  }
+                401:
+                    $ref: "#/components/responses/Unauthorized"
+
+    #-----User Password ----#
+
+    #Forgot password
+    "/v1/user/password/forgot/{email}":
+        put:
+            tags: [User Password]
+            summary: "Forgot password"
+            parameters:
+                - in: path
+                  required: true
+                  name: email
+                  schema:
+                      type: string
+                  description: email to forgot password
+
+            responses:
+                200:
+                    $ref: "#/components/responses/ResTrue"
+                400:
+                    description: "Failed"
+                    content:
+                        application/json:
+                            schema:
+                                type: "object"
+                            example:
+                                - {
+                                      code: "error.emailNotFound",
+                                      message: "Email not found.",
+                                  }
+
+    #Change password
+    "/v1/user/password":
+        put:
+            tags: [User Password]
+            security:
+                - bearerAuth: []
+            summary: "Change password"
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: "object"
+                            properties:
+                                currentPassword:
+                                    type: "string"
+                                    example: "currentPassword"
+                                password:
+                                    type: "string"
+                                    pattern: "^(?:\\+?(61))? ?(?:\\((?=.*\\)))?(0?[2-57-8])\\)? ?(\\d\\d(?:[- ](?=\\d{3})|(?!\\d\\d[- ]?\\d[- ]))\\d\\d[- ]?\\d[- ]?\\d{3})$"
+                                    example: "password"
+                            required:
+                                - currentPassword
+                                - password
+            responses:
+                200:
+                    description: "Success"
+                    content:
+                        application/json:
+                            schema:
+                                type: "object"
+                            example: { accessToken: "accessToken" }
+                401:
+                    $ref: "#/components/responses/Unauthorized"
+
+        #-----User Address ----#
+
+    #Get Address & Create Address
+    "/v1/user/address":
+        get:
+            tags: [User Address]
+            security:
+                - bearerAuth: []
+            summary: "Get Address"
+            responses:
+                200:
+                    description: "Success"
+                    content:
+                        application/json:
+                            schema:
+                                type: "object"
+                            example:
+                                - {
+                                      "userAddressId": userAddressId,
+                                      "userId": userId,
+                                      "phoneNumber": "phoneNumber",
+                                      "fullName": "fullName",
+                                      "ward": "phường 25",
+                                      "wardCode": "w2",
+                                      "district": "bình thạnh",
+                                      "districtCode": "dt2",
+                                      "city": "HCM",
+                                      "cityCode": "ct2",
+                                      "address": "749/16 XVNT",
+                                      "type": 1,
+                                      "isDefault": 1,
+                                  }
+                401:
+                    $ref: "#/components/responses/Unauthorized"
+
+        post:
+            tags: [User Address]
+            security:
+                - bearerAuth: []
+            summary: "Create Address"
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: "object"
+                            properties:
+                                fullName:
+                                    type: "string"
+                                    example: "fullName"
+                                phoneNumber:
+                                    type: "string"
+                                    pattern: '^(?:\\+?(61))? ?(?:\\((?=.*\\)))?(0?[2-57-8])\\)? ?(\\d\\d(?:[- ](?=\\d{3})|(?!\\d\\d[- ]?\\d[- ]))\\d\\d[- ]?\\d[- ]?\\d{3})$'
+                                    example: "phoneNumber"
+                                ward:
+                                    type: "string"
+                                    example: "fullName"
+                                wardCode:
+                                    type: "string"
+                                    example: "fullName"
+                                district:
+                                    type: "string"
+                                    example: "fullName"
+                                districtCode:
+                                    type: "string"
+                                    example: "fullName"
+                                city:
+                                    type: "string"
+                                    example: "fullName"
+                                cityCode:
+                                    type: "string"
+                                    example: "fullName"
+                                address:
+                                    type: "string"
+                                    example: "fullName"
+                            required:
+                                - fullName
+                                - phoneNumber
+                                - ward
+                                - wardCode
+                                - district
+                                - districtCode
+                                - city
+                                - cityCode
+                                - address
+            responses:
+                200:
+                    $ref: "#/components/responses/ResTrue"
+                401:
+                    $ref: "#/components/responses/Unauthorized"
+
+    #Update & Delete Address
+    "/v1/user/address/{userAddressId}":
+        put:
+            tags: [User Address]
+            security:
+                - bearerAuth: []
+            summary: "Change Address"
+            parameters:
+                - in: path
+                  required: true
+                  name: userAddressId
+                  schema:
+                      type: number
+                  description: addressId to update address
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: "object"
+                            properties:
+                                fullName:
+                                    type: "string"
+                                    example: "fullName"
+                                phoneNumber:
+                                    type: "string"
+                                    pattern: '^(?:\\+?(61))? ?(?:\\((?=.*\\)))?(0?[2-57-8])\\)? ?(\\d\\d(?:[- ](?=\\d{3})|(?!\\d\\d[- ]?\\d[- ]))\\d\\d[- ]?\\d[- ]?\\d{3})$'
+                                    example: "phoneNumber"
+                                ward:
+                                    type: "string"
+                                    example: "fullName"
+                                wardCode:
+                                    type: "string"
+                                    example: "fullName"
+                                district:
+                                    type: "string"
+                                    example: "fullName"
+                                districtCode:
+                                    type: "string"
+                                    example: "fullName"
+                                city:
+                                    type: "string"
+                                    example: "fullName"
+                                cityCode:
+                                    type: "string"
+                                    example: "fullName"
+                                address:
+                                    type: "string"
+                                    example: "fullName"
+            responses:
+                200:
+                    $ref: "#/components/responses/ResTrue"
+                400:
+                    description: "Failed"
+                    content:
+                        application/json:
+                            schema:
+                                type: "object"
+                            example:
+                                {
+                                    "code": "error.userAddressUpdateFailed",
+                                    "message": "User address update failed.",
+                                }
+                401:
+                    $ref: "#/components/responses/Unauthorized"
+        delete:
+            tags: [User Address]
+            security:
+                - bearerAuth: []
+            parameters:
+                - in: path
+                  required: true
+                  name: userAddressId
+                  schema:
+                      type: number
+                  description: addressId to delete address
+            summary: "Delete Address"
+            responses:
+                200:
+                    $ref: "#/components/responses/ResTrue"
+                400:
+                    description: "Failed"
+                    content:
+                        application/json:
+                            schema:
+                                type: "object"
+                            example:
+                                {
+                                    "code": "error.userAddressDeleteFailed",
+                                    "message": "User address delete failed.",
+                                }
+                401:
+                    $ref: "#/components/responses/Unauthorized"
+
+    #Change Default Address
+    "/v1/user/address/{userAddressId}/default":
+        put:
+            tags: [User Address]
+            security:
+                - bearerAuth: []
+            parameters:
+                - in: path
+                  required: true
+                  name: userAddressId
+                  schema:
+                      type: number
+                  description: addressId to change default address
+            summary: "Change Default Address"
+            responses:
+                200:
+                    $ref: "#/components/responses/ResTrue"
+                400:
+                    description: "Failed"
+                    content:
+                        application/json:
+                            schema:
+                                type: "object"
+                            example:
+                                - {
+                                      "code": "error.userAddressNotFound",
+                                      "message": "User address not found.",
+                                  }
+                                - {
+                                      "code": "error.userAddressIsDefault",
+                                      "message": "User address is default.",
+                                  }
+
+                401:
+                    $ref: "#/components/responses/Unauthorized"
