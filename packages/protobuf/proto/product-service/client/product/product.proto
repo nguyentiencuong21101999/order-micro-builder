@@ -1,0 +1,39 @@
+syntax = "proto3";
+package productProtobuf;
+option go_package = "product/";
+
+message PaginationGrpc{
+  optional int32 page = 1;
+  optional int32 limit = 2;
+  optional int32 total = 3;
+}
+
+
+message GetProductsReqGrpc{
+  optional int32 page = 1;
+  optional int32 limit = 2;
+}
+
+message ProductGrpc{
+  int32 productId = 1;
+  string name = 2;
+  optional string imageUrl = 3;
+  double price = 4;
+  int32 quality = 5;
+  optional int32 createdBy = 1000;
+  optional string createdDate =2000;
+  optional int32 updatedBy = 3000;
+  optional string updatedDate = 4000;
+}
+
+message ProductResGrpc {
+   repeated ProductGrpc data = 1;
+   PaginationGrpc pagination = 2;
+}
+
+service GrpcProduct {
+  rpc GetProducts(GetProductsReqGrpc) returns (ProductResGrpc) {};
+}
+
+
+

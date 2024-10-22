@@ -1,0 +1,11 @@
+version: v1
+plugins:
+  - name: ts_proto
+    out: gen/ts
+    opt:
+      - outputServices=grpc-js
+      - env=node
+      - esModuleInterop=true
+      - useDefaultTypes=true
+      - returnObservable=false
+    path: ./node_modules/.bin/protoc-gen-ts_proto

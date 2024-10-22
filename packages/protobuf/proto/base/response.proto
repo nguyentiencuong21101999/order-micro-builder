@@ -1,0 +1,10 @@
+syntax = "proto3";
+package baseProtobuf;
+
+option go_package = "base/";
+
+message PaginationGrpc{
+  optional int32 page = 1;
+  optional int32 limit = 2;
+  optional int32 total = 3;
+}
