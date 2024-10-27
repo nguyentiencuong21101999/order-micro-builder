@@ -1,0 +1,20 @@
+syntax = "proto3";
+package order.client.order;
+
+option go_package = "order/";
+
+message OrderCreateReqGrpc{
+  string productId = 1;
+  string name = 2;
+}
+
+message OrderCreateResGrpc {
+   bool data = 1;
+}
+
+service GrpcOrder {
+  rpc reate(OrderCreateReqGrpc) returns (OrderCreateResGrpc) {};
+}
+
+
+
