@@ -5,6 +5,7 @@ import { transformAndValidate } from '../../../utils/validator'
 import { AuthMiddleware } from '../../auth/auth.middleware'
 import { OrderCreateReq } from '../dtos/create.dto'
 import { OrderController } from './order.controller'
+import { OrderMiddleware } from './order.middleware'
 
 @Service()
 export class OrderRouter implements AppRoute {
@@ -19,7 +20,9 @@ export class OrderRouter implements AppRoute {
     private initRouter() {
         this.router.post(
             '/',
+            this.authMiddleware.authorization,
             transformAndValidate(OrderCreateReq),
+            OrderMiddleware.create,
             this.orderController.create.bind(this.orderController)
         )
     }

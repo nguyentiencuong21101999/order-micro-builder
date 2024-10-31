@@ -18,3 +18,5 @@ export enum BySortType {
     ASC = 'ASC',
     DESC = 'DESC',
 }
+
+export type DataUpdateType<T extends Object> = T | T[]

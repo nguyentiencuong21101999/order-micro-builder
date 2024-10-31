@@ -19,7 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	GrpcOrder_Create_FullMethodName = "/order.client.order.GrpcOrder/Create"
+	GrpcOrder_Create_FullMethodName = "/order.client.order.GrpcOrder/create"
 )
 
 // GrpcOrderClient is the client API for GrpcOrder service.
@@ -100,7 +100,7 @@ var GrpcOrder_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*GrpcOrderServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Create",
+			MethodName: "create",
 			Handler:    _GrpcOrder_Create_Handler,
 		},
 	},

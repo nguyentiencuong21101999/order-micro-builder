@@ -9,7 +9,6 @@ import { GrpcServiceGroup } from '../../../app'
 import { grpcReq, grpcRes } from '../../../base/base.grpc'
 import { handleGrpcError } from '../../../utils/error'
 import { ResponseWrapper } from '../../../utils/response'
-import { OrderCreateReq } from './dtos/create.dto'
 import { OrderService } from './order.service'
 
 @Service()
@@ -22,12 +21,8 @@ export class OrderController implements GrpcOrderServer {
         callback: grpcRes<OrderCreateResGrpc>
     ) => {
         try {
-            const payload = await OrderCreateReq.getData<OrderCreateReqGrpc>(
-                request
-            )
-            
-            await this.orderService.create(payload)
-            callback(null, new ResponseWrapper(1))
+            await this.orderService.create(request)
+            callback(null, new ResponseWrapper(true))
         } catch (err) {
             handleGrpcError(err, callback)
         }

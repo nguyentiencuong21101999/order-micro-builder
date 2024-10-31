@@ -3,9 +3,22 @@ package order.client.order;
 
 option go_package = "order/";
 
+/* create order */
+message OrderProductGrpc{
+  string productId = 2;
+  string name = 3;
+  string imageUrl = 4;
+  double price = 5;
+  int32 quality = 6;
+  string note = 7;
+  optional string attributes = 8;
+}
+
 message OrderCreateReqGrpc{
-  string productId = 1;
-  string name = 2;
+  int32 userId = 1;
+  optional string sumNote = 2;
+  int32 userAddressId = 3;
+  repeated OrderProductGrpc products = 4;
 }
 
 message OrderCreateResGrpc {
@@ -13,7 +26,7 @@ message OrderCreateResGrpc {
 }
 
 service GrpcOrder {
-  rpc reate(OrderCreateReqGrpc) returns (OrderCreateResGrpc) {};
+  rpc create(OrderCreateReqGrpc) returns (OrderCreateResGrpc) {};
 }
 
 

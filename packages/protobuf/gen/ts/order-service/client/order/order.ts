@@ -21,26 +21,201 @@ import {
 
 export const protobufPackage = "order.client.order";
 
-export interface OrderCreateReqGrpc {
+/** create order */
+export interface OrderProductGrpc {
   productId: string;
   name: string;
+  imageUrl: string;
+  price: number;
+  quality: number;
+  note: string;
+  attributes?: string | undefined;
+}
+
+export interface OrderCreateReqGrpc {
+  userId: number;
+  sumNote?: string | undefined;
+  userAddressId: number;
+  products: OrderProductGrpc[];
 }
 
 export interface OrderCreateResGrpc {
   data: boolean;
 }
 
+function createBaseOrderProductGrpc(): OrderProductGrpc {
+  return { productId: "", name: "", imageUrl: "", price: 0, quality: 0, note: "", attributes: undefined };
+}
+
+export const OrderProductGrpc: MessageFns<OrderProductGrpc> = {
+  encode(message: OrderProductGrpc, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.productId !== "") {
+      writer.uint32(18).string(message.productId);
+    }
+    if (message.name !== "") {
+      writer.uint32(26).string(message.name);
+    }
+    if (message.imageUrl !== "") {
+      writer.uint32(34).string(message.imageUrl);
+    }
+    if (message.price !== 0) {
+      writer.uint32(41).double(message.price);
+    }
+    if (message.quality !== 0) {
+      writer.uint32(48).int32(message.quality);
+    }
+    if (message.note !== "") {
+      writer.uint32(58).string(message.note);
+    }
+    if (message.attributes !== undefined) {
+      writer.uint32(66).string(message.attributes);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): OrderProductGrpc {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseOrderProductGrpc();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.productId = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.name = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.imageUrl = reader.string();
+          continue;
+        }
+        case 5: {
+          if (tag !== 41) {
+            break;
+          }
+
+          message.price = reader.double();
+          continue;
+        }
+        case 6: {
+          if (tag !== 48) {
+            break;
+          }
+
+          message.quality = reader.int32();
+          continue;
+        }
+        case 7: {
+          if (tag !== 58) {
+            break;
+          }
+
+          message.note = reader.string();
+          continue;
+        }
+        case 8: {
+          if (tag !== 66) {
+            break;
+          }
+
+          message.attributes = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): OrderProductGrpc {
+    return {
+      productId: isSet(object.productId) ? globalThis.String(object.productId) : "",
+      name: isSet(object.name) ? globalThis.String(object.name) : "",
+      imageUrl: isSet(object.imageUrl) ? globalThis.String(object.imageUrl) : "",
+      price: isSet(object.price) ? globalThis.Number(object.price) : 0,
+      quality: isSet(object.quality) ? globalThis.Number(object.quality) : 0,
+      note: isSet(object.note) ? globalThis.String(object.note) : "",
+      attributes: isSet(object.attributes) ? globalThis.String(object.attributes) : undefined,
+    };
+  },
+
+  toJSON(message: OrderProductGrpc): unknown {
+    const obj: any = {};
+    if (message.productId !== "") {
+      obj.productId = message.productId;
+    }
+    if (message.name !== "") {
+      obj.name = message.name;
+    }
+    if (message.imageUrl !== "") {
+      obj.imageUrl = message.imageUrl;
+    }
+    if (message.price !== 0) {
+      obj.price = message.price;
+    }
+    if (message.quality !== 0) {
+      obj.quality = Math.round(message.quality);
+    }
+    if (message.note !== "") {
+      obj.note = message.note;
+    }
+    if (message.attributes !== undefined) {
+      obj.attributes = message.attributes;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<OrderProductGrpc>, I>>(base?: I): OrderProductGrpc {
+    return OrderProductGrpc.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<OrderProductGrpc>, I>>(object: I): OrderProductGrpc {
+    const message = createBaseOrderProductGrpc();
+    message.productId = object.productId ?? "";
+    message.name = object.name ?? "";
+    message.imageUrl = object.imageUrl ?? "";
+    message.price = object.price ?? 0;
+    message.quality = object.quality ?? 0;
+    message.note = object.note ?? "";
+    message.attributes = object.attributes ?? undefined;
+    return message;
+  },
+};
+
 function createBaseOrderCreateReqGrpc(): OrderCreateReqGrpc {
-  return { productId: "", name: "" };
+  return { userId: 0, sumNote: undefined, userAddressId: 0, products: [] };
 }
 
 export const OrderCreateReqGrpc: MessageFns<OrderCreateReqGrpc> = {
   encode(message: OrderCreateReqGrpc, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.productId !== "") {
-      writer.uint32(10).string(message.productId);
+    if (message.userId !== 0) {
+      writer.uint32(8).int32(message.userId);
     }
-    if (message.name !== "") {
-      writer.uint32(18).string(message.name);
+    if (message.sumNote !== undefined) {
+      writer.uint32(18).string(message.sumNote);
+    }
+    if (message.userAddressId !== 0) {
+      writer.uint32(24).int32(message.userAddressId);
+    }
+    for (const v of message.products) {
+      OrderProductGrpc.encode(v!, writer.uint32(34).fork()).join();
     }
     return writer;
   },
@@ -53,11 +228,11 @@ export const OrderCreateReqGrpc: MessageFns<OrderCreateReqGrpc> = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1: {
-          if (tag !== 10) {
+          if (tag !== 8) {
             break;
           }
 
-          message.productId = reader.string();
+          message.userId = reader.int32();
           continue;
         }
         case 2: {
@@ -65,7 +240,23 @@ export const OrderCreateReqGrpc: MessageFns<OrderCreateReqGrpc> = {
             break;
           }
 
-          message.name = reader.string();
+          message.sumNote = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.userAddressId = reader.int32();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.products.push(OrderProductGrpc.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -79,18 +270,28 @@ export const OrderCreateReqGrpc: MessageFns<OrderCreateReqGrpc> = {
 
   fromJSON(object: any): OrderCreateReqGrpc {
     return {
-      productId: isSet(object.productId) ? globalThis.String(object.productId) : "",
-      name: isSet(object.name) ? globalThis.String(object.name) : "",
+      userId: isSet(object.userId) ? globalThis.Number(object.userId) : 0,
+      sumNote: isSet(object.sumNote) ? globalThis.String(object.sumNote) : undefined,
+      userAddressId: isSet(object.userAddressId) ? globalThis.Number(object.userAddressId) : 0,
+      products: globalThis.Array.isArray(object?.products)
+        ? object.products.map((e: any) => OrderProductGrpc.fromJSON(e))
+        : [],
     };
   },
 
   toJSON(message: OrderCreateReqGrpc): unknown {
     const obj: any = {};
-    if (message.productId !== "") {
-      obj.productId = message.productId;
+    if (message.userId !== 0) {
+      obj.userId = Math.round(message.userId);
     }
-    if (message.name !== "") {
-      obj.name = message.name;
+    if (message.sumNote !== undefined) {
+      obj.sumNote = message.sumNote;
+    }
+    if (message.userAddressId !== 0) {
+      obj.userAddressId = Math.round(message.userAddressId);
+    }
+    if (message.products?.length) {
+      obj.products = message.products.map((e) => OrderProductGrpc.toJSON(e));
     }
     return obj;
   },
@@ -100,8 +301,10 @@ export const OrderCreateReqGrpc: MessageFns<OrderCreateReqGrpc> = {
   },
   fromPartial<I extends Exact<DeepPartial<OrderCreateReqGrpc>, I>>(object: I): OrderCreateReqGrpc {
     const message = createBaseOrderCreateReqGrpc();
-    message.productId = object.productId ?? "";
-    message.name = object.name ?? "";
+    message.userId = object.userId ?? 0;
+    message.sumNote = object.sumNote ?? undefined;
+    message.userAddressId = object.userAddressId ?? 0;
+    message.products = object.products?.map((e) => OrderProductGrpc.fromPartial(e)) || [];
     return message;
   },
 };
@@ -167,7 +370,7 @@ export const OrderCreateResGrpc: MessageFns<OrderCreateResGrpc> = {
 export type GrpcOrderService = typeof GrpcOrderService;
 export const GrpcOrderService = {
   create: {
-    path: "/order.client.order.GrpcOrder/Create",
+    path: "/order.client.order.GrpcOrder/create",
     requestStream: false,
     responseStream: false,
     requestSerialize: (value: OrderCreateReqGrpc) => Buffer.from(OrderCreateReqGrpc.encode(value).finish()),
