@@ -122,11 +122,10 @@ export class App {
         })
 
         process.on('unhandledRejection', (reason, promise) => {
-            console.log(reason.toString())
             logger.error(
                 `Unhandled Rejection at: Promise ${JSON.stringify({
                     promise,
-                    reason,
+                    reason: reason.toString(),
                 })}`
             )
         })

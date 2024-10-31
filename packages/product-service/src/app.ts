@@ -86,14 +86,16 @@ export class App {
         ])
 
         this.grpcServer.bindAsync(
-            '0.0.0.0:1006',
+            this.config.grpcPort,
             grpc.ServerCredentials.createInsecure(),
             () => {
-                logger.info('server is running on 1006')
+                logger.info(
+                    `GRPC: product-service is running on ${this.config.grpcPort}`
+                )
                 this.grpcServer.start()
             }
         )
-        this.app.listen(Number(this.config.port), `0.0.0.0`, () => {
+        this.app.listen(Number(this.config.port), () => {
             return logger.info(
                 `Server is listening at port ${
                     this.config.port

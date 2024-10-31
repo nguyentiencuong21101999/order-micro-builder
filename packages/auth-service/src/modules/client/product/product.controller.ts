@@ -26,7 +26,6 @@ export class ProductController {
             )
             res.send(new ResponseWrapper(data, null, pagination))
         } catch (err) {
-            console.log(err.toString())
             next(err)
         }
     }
