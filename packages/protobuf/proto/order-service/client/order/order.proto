@@ -10,7 +10,7 @@ message OrderProductGrpc{
   string imageUrl = 4;
   double price = 5;
   int32 quality = 6;
-  string note = 7;
+  optional string note = 7;
   optional string attributes = 8;
 }
 

@@ -1,6 +1,6 @@
 import amqplib, { Message } from 'amqplib'
-import { Service } from 'typedi'
-
+import { Inject, Service } from 'typedi'
+import { ProductConsumerService } from '../client/product/consumer/product.consumer.service'
 import { RabbitQueueNames } from './types/queue-name.type'
 
 export interface IConsumer<T extends Message> {
@@ -19,10 +19,12 @@ export type IHandlerConsumerFunc<T> = {
 
 @Service()
 export class RabbitConsumer<T extends Message> implements IConsumer<T> {
-    constructor() {} //@Inject() private orderConsumerService: OrderConsumerService
+    constructor(
+        @Inject() private productConsumerService: ProductConsumerService
+    ) {}
 
     async setupConsumers(channel: amqplib.Channel) {
-        const consumers = []
+        const consumers = [RabbitQueueNames.ProductCheck]
         await Promise.all(
             consumers.map(async (queueName) => {
                 await this.createConsumer(channel, queueName)
@@ -46,10 +48,10 @@ export class RabbitConsumer<T extends Message> implements IConsumer<T> {
     }
 
     async consumerWithHandle(action: string, data: any) {
-        // switch (action) {
-        //     case RabbitQueueNames.productCheckProducer:
-        //         await this.orderConsumerService.handleOrderCreatedConsumer(data)
-        //         break
-        // }
+        switch (action) {
+            case RabbitQueueNames.ProductCheck:
+                await this.productConsumerService.checkValidProducts(data)
+                break
+        }
     }
 }

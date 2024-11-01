@@ -13,6 +13,7 @@ import * as grpc from 'protobuf/node_modules/@grpc/grpc-js'
 import Container from 'typedi'
 import { Config, validateConfig } from './configs'
 import { AppDataSource } from './database/connection'
+import { RabbitMQManager } from './modules/rabbit-mq/rabbit-mq'
 import { QueueManager, setupQueues } from './queues/queues'
 import { setupWorkers } from './queues/workers'
 import { CacheManager } from './utils/cache'
@@ -83,6 +84,7 @@ export class App {
         await Promise.all([
             Container.get(CacheManager).check(),
             AppDataSource.initialize(),
+            Container.get(RabbitMQManager).connect(),
         ])
 
         this.app.listen(Number(this.config.port), `0.0.0.0`, () => {

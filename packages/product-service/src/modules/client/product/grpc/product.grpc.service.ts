@@ -1,11 +1,11 @@
 import { ProductGrpc } from 'protobuf/gen/ts/product-service/client/product/product'
 import { Service } from 'typedi'
-import { Pagination } from '../../../utils/response'
+import { Pagination } from '../../../../utils/response'
+import { Product } from '../entities/product.entity'
 import { ProductDTO } from './dtos/product.dto'
-import { Product } from './entities/product.entity'
 
 @Service()
-export class ProductService {
+export class ProductGrpcGrpcService {
     GetProducts = async (pagination: Pagination) => {
         const [products, total] = await Product.findAndCount({
             take: pagination.limit,
@@ -17,4 +17,6 @@ export class ProductService {
             pagination,
         }
     }
+
+    checkValidProducts = async (data: any) => {}
 }

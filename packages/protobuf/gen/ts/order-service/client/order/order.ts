@@ -28,7 +28,7 @@ export interface OrderProductGrpc {
   imageUrl: string;
   price: number;
   quality: number;
-  note: string;
+  note?: string | undefined;
   attributes?: string | undefined;
 }
 
@@ -44,7 +44,7 @@ export interface OrderCreateResGrpc {
 }
 
 function createBaseOrderProductGrpc(): OrderProductGrpc {
-  return { productId: "", name: "", imageUrl: "", price: 0, quality: 0, note: "", attributes: undefined };
+  return { productId: "", name: "", imageUrl: "", price: 0, quality: 0, note: undefined, attributes: undefined };
 }
 
 export const OrderProductGrpc: MessageFns<OrderProductGrpc> = {
@@ -64,7 +64,7 @@ export const OrderProductGrpc: MessageFns<OrderProductGrpc> = {
     if (message.quality !== 0) {
       writer.uint32(48).int32(message.quality);
     }
-    if (message.note !== "") {
+    if (message.note !== undefined) {
       writer.uint32(58).string(message.note);
     }
     if (message.attributes !== undefined) {
@@ -152,7 +152,7 @@ export const OrderProductGrpc: MessageFns<OrderProductGrpc> = {
       imageUrl: isSet(object.imageUrl) ? globalThis.String(object.imageUrl) : "",
       price: isSet(object.price) ? globalThis.Number(object.price) : 0,
       quality: isSet(object.quality) ? globalThis.Number(object.quality) : 0,
-      note: isSet(object.note) ? globalThis.String(object.note) : "",
+      note: isSet(object.note) ? globalThis.String(object.note) : undefined,
       attributes: isSet(object.attributes) ? globalThis.String(object.attributes) : undefined,
     };
   },
@@ -174,7 +174,7 @@ export const OrderProductGrpc: MessageFns<OrderProductGrpc> = {
     if (message.quality !== 0) {
       obj.quality = Math.round(message.quality);
     }
-    if (message.note !== "") {
+    if (message.note !== undefined) {
       obj.note = message.note;
     }
     if (message.attributes !== undefined) {
@@ -193,7 +193,7 @@ export const OrderProductGrpc: MessageFns<OrderProductGrpc> = {
     message.imageUrl = object.imageUrl ?? "";
     message.price = object.price ?? 0;
     message.quality = object.quality ?? 0;
-    message.note = object.note ?? "";
+    message.note = object.note ?? undefined;
     message.attributes = object.attributes ?? undefined;
     return message;
   },

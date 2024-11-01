@@ -3,8 +3,8 @@ import { Inject, Service } from 'typedi'
 import { Config } from '../../configs'
 import { logger } from '../../utils/logger'
 
-import { RabbitConsumer } from './consumers'
 import { RabbitProducer } from './producers'
+import { RabbitConsumer } from './consumers'
 
 @Service()
 export class RabbitMQManager {
@@ -30,7 +30,6 @@ export class RabbitMQManager {
     }
 
     sendJobToQueue = async (queueName: string, data: any) => {
-        console.log(data)
         await this.rabbitProducer.produce(this.conn, queueName, data)
     }
 }

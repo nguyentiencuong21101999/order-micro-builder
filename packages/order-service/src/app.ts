@@ -7,13 +7,13 @@ import express, {
     json,
     urlencoded,
 } from 'express'
-import expressBasicAuth from 'express-basic-auth'
 import helmet from 'helmet'
 import * as grpc from 'protobuf/node_modules/@grpc/grpc-js'
 import Container from 'typedi'
 import { Config, validateConfig } from './configs'
 import { AppDataSource } from './database/connection'
-import { QueueManager, setupQueues } from './queues/queues'
+import { RabbitMQManager } from './modules/rabbit-mq/rabbit-mq'
+import { setupQueues } from './queues/queues'
 import { setupWorkers } from './queues/workers'
 import { CacheManager } from './utils/cache'
 import { handleError } from './utils/error'
@@ -56,14 +56,14 @@ export class App {
         this.app.use(json())
         this.app.use(urlencoded({ extended: true }))
 
-        this.app.use(
-            '/admin/queues',
-            expressBasicAuth({
-                challenge: true,
-                users: { admin: this.config.basicAuthPassword },
-            }),
-            Container.get(QueueManager).createBoard().getRouter()
-        )
+        // this.app.use(
+        //     '/admin/queues',
+        //     expressBasicAuth({
+        //         challenge: true,
+        //         users: { admin: this.config.basicAuthPassword },
+        //     }),
+        //     Container.get(QueueManager).createBoard().getRouter()
+        // )
 
         this.app.get('/check', (req, res, next) => {
             res.json({ status: 'success' })
@@ -83,6 +83,7 @@ export class App {
         await Promise.all([
             Container.get(CacheManager).check(),
             AppDataSource.initialize(),
+            Container.get(RabbitMQManager).connect(),
         ])
 
         this.grpcServer.bindAsync(
@@ -104,7 +105,7 @@ export class App {
         })
 
         process.on('uncaughtException', (err) => {
-            logger.error(err)
+            logger.error(err.toString())
         })
 
         process.on('unhandledRejection', (reason, promise) => {

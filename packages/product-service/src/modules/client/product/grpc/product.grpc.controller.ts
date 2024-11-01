@@ -6,27 +6,29 @@ import {
 } from 'protobuf/gen/ts/product-service/client/product/product'
 import { ServerErrorResponse } from 'protobuf/node_modules/@grpc/grpc-js'
 import { Inject, Service } from 'typedi'
-import { GrpcServiceGroup } from '../../../app'
-import { grpcReq, grpcRes } from '../../../base/base.grpc'
-import { handleGrpcError } from '../../../utils/error'
-import { Pagination, ResponseWrapper } from '../../../utils/response'
-import { ProductService } from './product.service'
+import { GrpcServiceGroup } from '../../../../app'
+import { grpcReq, grpcRes } from '../../../../base/base.grpc'
+import { handleGrpcError } from '../../../../utils/error'
+import { Pagination, ResponseWrapper } from '../../../../utils/response'
+import { ProductGrpcGrpcService } from './product.grpc.service'
 export type ServerErrorResponses = ServerErrorResponse & {
     codes: string
     message: string
 }
 
 @Service()
-export class ProductController implements GrpcProductServer {
+export class ProductGrpcController implements GrpcProductServer {
     [method: string]: any
-    constructor(@Inject() private productService: ProductService) {}
+    constructor(@Inject() private productGrpcService: ProductGrpcGrpcService) {}
     getProducts = async (
         req: grpcReq<GetProductsReqGrpc>,
         callback: grpcRes<ProductResGrpc>
     ) => {
         try {
             const { products, pagination } =
-                await this.productService.GetProducts(Pagination.fromGrpc(req))
+                await this.productGrpcService.GetProducts(
+                    Pagination.fromGrpc(req)
+                )
             callback(null, new ResponseWrapper(products, null, pagination))
         } catch (err) {
             handleGrpcError(err, callback)
@@ -35,6 +37,6 @@ export class ProductController implements GrpcProductServer {
 }
 
 export const productGrpcService: GrpcServiceGroup = {
-    clsGrpcService: ProductController,
+    clsGrpcService: ProductGrpcController,
     clsServiceDefinition: GrpcProductService,
 }

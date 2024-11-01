@@ -18,6 +18,7 @@ import { setupWorkers } from './queues/workers'
 import { CacheManager } from './utils/cache'
 import { handleError } from './utils/error'
 import { logger } from './utils/logger'
+import { RabbitMQManager } from './modules/rabbit-mq/rabbit-mq'
 
 export interface GrpcServiceGroup {
     clsGrpcService: ClassConstructor<grpc.UntypedServiceImplementation>
@@ -83,6 +84,7 @@ export class App {
         await Promise.all([
             Container.get(CacheManager).check(),
             AppDataSource.initialize(),
+            Container.get(RabbitMQManager).connect(),
         ])
 
         this.grpcServer.bindAsync(

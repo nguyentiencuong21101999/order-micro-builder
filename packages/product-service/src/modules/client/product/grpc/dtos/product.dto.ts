@@ -1,7 +1,7 @@
 import { Expose } from 'class-transformer'
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator'
 import { ProductGrpc } from 'protobuf/gen/ts/product-service/client/product/product'
-import { BaseResponseGrpc } from '../../../../base/base.grpc'
+import { BaseResponseGrpc } from '../../../../../base/base.grpc'
 
 export class ProductDTO extends BaseResponseGrpc implements ProductGrpc {
     @Expose()

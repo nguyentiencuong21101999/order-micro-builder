@@ -36,6 +36,9 @@ export class Config {
     @Type(() => MailerConfig)
     mailer: MailerConfig
 
+    @IsString()
+    rabbitMqUri: string
+
     constructor() {
         const env = process.env
         this.nodeEnv = env.NODE_ENV
@@ -46,6 +49,7 @@ export class Config {
         this.redis = JSON.parse(env.REDIS)
         this.basicAuthPassword = env.BASIC_AUTH_PASSWORD
         this.mailer = JSON.parse(env.MAILER)
+        this.rabbitMqUri = env.RABBIT_MQ_URI
     }
 
     isProduction() {
