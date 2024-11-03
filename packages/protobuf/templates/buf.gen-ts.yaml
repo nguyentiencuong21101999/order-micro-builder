@@ -9,3 +9,4 @@ plugins:
       - useDefaultTypes=true
       - returnObservable=false
     path: ./node_modules/.bin/protoc-gen-ts_proto
+    strategy: all

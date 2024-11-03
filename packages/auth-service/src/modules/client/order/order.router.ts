@@ -4,6 +4,7 @@ import { AppRoute } from '../../../app'
 import { transformAndValidate } from '../../../utils/validator'
 import { AuthMiddleware } from '../../auth/auth.middleware'
 import { OrderCreateReq } from '../dtos/create.dto'
+import { GetOrdersReq } from '../dtos/order.dto'
 import { OrderController } from './order.controller'
 import { OrderMiddleware } from './order.middleware'
 
@@ -24,6 +25,13 @@ export class OrderRouter implements AppRoute {
             transformAndValidate(OrderCreateReq),
             OrderMiddleware.create,
             this.orderController.create.bind(this.orderController)
+        )
+
+        this.router.get(
+            '/list',
+            this.authMiddleware.authorization,
+            transformAndValidate(GetOrdersReq),
+            this.orderController.getOrders.bind(this.orderController)
         )
     }
 }

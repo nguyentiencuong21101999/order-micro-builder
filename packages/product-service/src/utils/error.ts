@@ -41,65 +41,15 @@ export const Errors = {
         'error.invalidFileType',
         'Invalid file type.'
     ),
-    UserNotFound: new ErrorResp('error.userNotFound', 'User not found.'),
-    EmailInvalid: new ErrorResp('error.emailInvalid', 'Email invalid.'),
-    PasswordInvalid: new ErrorResp(
-        'error.passwordInvalid',
-        'Password invalid.'
+    PriceInvalid: new ErrorResp('error.priceInvalid', 'Price Invalid .'),
+    QualityNotEnough: new ErrorResp(
+        'error.qualityNotEnough',
+        'Quality not enough .'
     ),
-    UserNotVerified: new ErrorResp(
-        'error.userNotVerified',
-        'User not verified.'
+    ProductNotFound: new ErrorResp(
+        'error.productNotFound',
+        'Product not found.'
     ),
-    UserVerified: new ErrorResp('error.userVerified', 'User verified.'),
-    UserDeleted: new ErrorResp('error.userDeleted', 'User deleted.'),
-    MaximumSendMail: new ErrorResp(
-        'error.maximumSendMail',
-        'Maximum send mail.'
-    ),
-    OtpInvalid: new ErrorResp('error.otpInvalid', 'Otp invalid.'),
-    OtpExpired: new ErrorResp('error.otpExpired', 'Otp expired.'),
-    OtpUsed: new ErrorResp('error.otpUsed', 'Otp used.'),
-    AccountExisted: new ErrorResp('error.accountExisted', 'Account existed.'),
-    UsernameExisted: new ErrorResp(
-        'error.usernameExisted',
-        'Username existed.'
-    ),
-    EmailExisted: new ErrorResp('error.emailExisted', 'Email existed.'),
-    PhoneNumberExisted: new ErrorResp(
-        'error.phoneNumberExisted',
-        'PhoneNumber existed.'
-    ),
-    AccountInvalid: new ErrorResp(
-        'error.accountInvalid',
-        'Username or password invalid.'
-    ),
-    CurrentPasswordInvalid: new ErrorResp(
-        'error.currentPasswordInvalid',
-        'Current password invalid.'
-    ),
-    ChangePasswordFailed: new ErrorResp(
-        'error.changePasswordFailed',
-        'Change password failed.'
-    ),
-    UserAddressUpdateFailed: new ErrorResp(
-        'error.userAddressUpdateFailed',
-        'User address update failed.'
-    ),
-    UserAddressDeleteFailed: new ErrorResp(
-        'error.userAddressDeleteFailed',
-        'User address delete failed.'
-    ),
-    UserAddressNotFound: new ErrorResp(
-        'error.userAddressNotFound',
-        'User address not found.'
-    ),
-    UserAddressIsDefault: new ErrorResp(
-        'error.userAddressIsDefault',
-        'User address is default.'
-    ),
-    RoleInvalid: new ErrorResp('error.roleInvalid', 'Role invalid.'),
-    EmailNotFound: new ErrorResp('error.emailNotFound', 'Email not found.'),
 }
 
 export const handleError = (err: Error, res: Response) => {

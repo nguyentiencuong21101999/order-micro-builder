@@ -3,6 +3,9 @@ package order.client.order;
 
 option go_package = "order/";
 
+import "base/dto.proto";
+import "base/entity.proto";
+
 /* create order */
 message OrderProductGrpc{
   string productId = 2;
@@ -25,9 +28,30 @@ message OrderCreateResGrpc {
    bool data = 1;
 }
 
-service GrpcOrder {
-  rpc create(OrderCreateReqGrpc) returns (OrderCreateResGrpc) {};
+/* Get Orders */
+message GetOrdersReqGrpc{
+   int32 page = 1;
+   int32 limit = 2;
+    int32 userId = 3;
 }
+
+message OrderReqGrpc{
+    base.entity.OrderEntityGrpc order = 1;
+    repeated base.entity.ProductEntityGrpc products = 2;
+}
+
+
+message GetOrdersResGrpc {
+   repeated OrderReqGrpc data = 1;
+   base.dto.Pagination pagination = 2;
+}
+
+service GrpcOrder {
+    rpc create(OrderCreateReqGrpc) returns (OrderCreateResGrpc) {};
+    rpc getOrders(GetOrdersReqGrpc) returns (GetOrdersResGrpc) {};
+  }
+
+
 
 
 

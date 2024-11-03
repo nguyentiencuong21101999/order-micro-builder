@@ -1,7 +1,11 @@
-import { OrderCreateReqGrpc } from 'protobuf/gen/ts/order-service/client/order/order'
+import {
+    GetOrdersReqGrpc,
+    OrderCreateReqGrpc,
+} from 'protobuf/gen/ts/order-service/client/order/order'
 import { Inject, Service } from 'typedi'
 import { startTransaction } from '../../../../database/connection'
 import { genPrimaryKey } from '../../../../utils/crypto'
+import { Pagination } from '../../../../utils/response'
 import { RabbitMQManager } from '../../../rabbit-mq/rabbit-mq'
 import { RabbitQueueNames } from '../../../rabbit-mq/types/queue-name.type'
 import { OrderProduct } from '../entities/order-product.entity'
@@ -17,7 +21,7 @@ export class OrderGrpcService {
         let totalQuality = 0,
             totalPrice = 0
         const { userId, userAddressId, sumNote, products } = data
-        const status = OrderStatusType.orderCreated
+        const status = OrderStatusType.OrderCreated
 
         products.forEach((product) => {
             const { price, quality } = product
@@ -25,19 +29,6 @@ export class OrderGrpcService {
             totalQuality += quality
         })
 
-        // Producer to Catalog Service
-        const orderId = genPrimaryKey(16)
-        const dataQueue: OrderCreatedDataQueue = {
-            orderId,
-            userId,
-            products,
-            status,
-        }
-        await this.rabbitMqManager.sendJobToQueue(
-            RabbitQueueNames.orderCreated,
-            dataQueue
-        )
-        return
         await startTransaction(async (manager) => {
             const orderId = genPrimaryKey(16)
             await Order.orderCreate(
@@ -66,9 +57,14 @@ export class OrderGrpcService {
                 status,
             }
             await this.rabbitMqManager.sendJobToQueue(
-                RabbitQueueNames.orderCreated,
+                RabbitQueueNames.OrderCreated,
                 dataQueue
             )
         })
+    }
+
+    getOrders = async (data: GetOrdersReqGrpc, pagination: Pagination) => {
+        const { userId } = data
+        return await Order.getOrders(userId, pagination)
     }
 }

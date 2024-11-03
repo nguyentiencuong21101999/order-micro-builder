@@ -16,4 +16,15 @@ export class OrderService {
             this.grpcService.order.create.bind(this.grpcService.order)
         )
     }
+
+    getOrders = async (data: OrderCreateReq) => {
+        /*
+        Because getProduct is normal function,
+        use an arrow function or bind( this.grpcService.product)
+        */
+        return await callGrpc(
+            data,
+            this.grpcService.order.getOrders.bind(this.grpcService.order)
+        )
+    }
 }

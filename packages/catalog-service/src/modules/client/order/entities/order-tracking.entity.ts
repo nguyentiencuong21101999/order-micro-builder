@@ -7,7 +7,7 @@ export class OrderTracking extends BaseEntities {
     orderTrackingId: number
 
     @Column({ type: 'varchar' })
-    orderId: number
+    orderId: string
 
     @Column({ type: 'int' })
     userId: number
@@ -17,6 +17,12 @@ export class OrderTracking extends BaseEntities {
 
     @Column({ type: 'varchar' })
     content: string
+
+    @Column({ type: 'text' })
+    errorCode: string
+
+    @Column({ type: 'text' })
+    errorMessage: string
 
     static async orderTrackingCreate(
         data: OrderTracking | object,

@@ -17,6 +17,7 @@ export const transformAndValidate = <T extends object>(
                 ...req.params,
                 ...req.query,
                 ...req.body,
+                ...{ userId: req?.userId },
             }
 
             // transform data to target instance

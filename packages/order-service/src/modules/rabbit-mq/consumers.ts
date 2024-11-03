@@ -1,7 +1,9 @@
 import amqplib, { Message } from 'amqplib'
-import { Service } from 'typedi'
+import Container, { Inject, Service } from 'typedi'
 
+import { OrderConsumerService } from '../client/order/consumer/product.consumer.service'
 import { RabbitQueueNames } from './types/queue-name.type'
+import { RabbitMQManager } from './rabbit-mq'
 
 export interface IConsumer<T extends Message> {
     createConsumer(
@@ -19,10 +21,10 @@ export type IHandlerConsumerFunc<T> = {
 
 @Service()
 export class RabbitConsumer<T extends Message> implements IConsumer<T> {
-    constructor() {} //@Inject() private orderConsumerService: OrderConsumerService
+    constructor(@Inject() private orderConsumerService: OrderConsumerService) {}
 
     async setupConsumers(channel: amqplib.Channel) {
-        const consumers = []
+        const consumers = [RabbitQueueNames.OrderUpdate]
         await Promise.all(
             consumers.map(async (queueName) => {
                 await this.createConsumer(channel, queueName)
@@ -46,10 +48,15 @@ export class RabbitConsumer<T extends Message> implements IConsumer<T> {
     }
 
     async consumerWithHandle(action: string, data: any) {
-        // switch (action) {
-        //     case RabbitQueueNames.productCheckProducer:
-        //         await this.orderConsumerService.handleOrderCreatedConsumer(data)
-        //         break
-        // }
+        await this.orderConsumerService.handleOrderUpdate(data)
+        switch (action) {
+            case RabbitQueueNames.OrderUpdate:
+                await this.orderConsumerService.handleOrderUpdate(data)
+                await Container.get(RabbitMQManager).sendJobToQueue(
+                    RabbitQueueNames.OrderUpdated,
+                    data
+                )
+                break
+        }
     }
 }

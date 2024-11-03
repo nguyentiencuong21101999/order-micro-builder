@@ -29,4 +29,19 @@ export class OrderController {
             next(err)
         }
     }
+
+    async getOrders(
+        req: DataRequest<OrderCreateReq>,
+        res: Response,
+        next: NextFunction
+    ) {
+        try {
+            const { data, pagination } = await this.orderService.getOrders(
+                req.data
+            )
+            res.send(new ResponseWrapper(data, null, pagination))
+        } catch (err) {
+            next(err)
+        }
+    }
 }

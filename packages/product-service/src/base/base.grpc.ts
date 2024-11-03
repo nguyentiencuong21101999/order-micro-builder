@@ -24,7 +24,7 @@ export class BaseResponseGrpc {
     @Transform(toDateTimeBaseResponse)
     updatedDate: string
 
-    static baseData = async <T>(data: any, cls: ClassConstructor<T>) => {
-        return await transformAndValidateResGrpc(cls, data)
+    static baseData = <T>(data: any, cls: ClassConstructor<T>) => {
+        return transformAndValidateResGrpc(cls, data)
     }
 }

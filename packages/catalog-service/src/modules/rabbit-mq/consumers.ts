@@ -1,6 +1,9 @@
 import amqplib, { Message } from 'amqplib'
-import { Inject, Service } from 'typedi'
+import { OrderTrackingJobDataShared } from 'protobuf/shared/dtos/catalog.dto'
+import Container, { Inject, Service } from 'typedi'
 import { OrderConsumerService } from '../client/order/consumer/order.consumer.service'
+import { OrderStatusType } from '../client/order/types/order-consumer.type'
+import { RabbitMQManager } from './rabbit-mq'
 import { RabbitQueueNames } from './types/queue-name.type'
 
 export interface IConsumer<T extends Message> {
@@ -22,7 +25,11 @@ export class RabbitConsumer<T extends Message> implements IConsumer<T> {
     constructor(@Inject() private orderConsumerService: OrderConsumerService) {}
 
     async setupConsumers(channel: amqplib.Channel) {
-        const consumers = [RabbitQueueNames.orderCreated]
+        const consumers = [
+            RabbitQueueNames.OrderCreated,
+            RabbitQueueNames.ProductChecked,
+            RabbitQueueNames.OrderUpdated,
+        ]
         await Promise.all(
             consumers.map(async (queueName) => {
                 await this.createConsumer(channel, queueName)
@@ -45,10 +52,43 @@ export class RabbitConsumer<T extends Message> implements IConsumer<T> {
         })
     }
 
-    async consumerWithHandle(action: string, data: any) {
+    async consumerWithHandle(
+        action: string,
+        data: OrderTrackingJobDataShared | any
+    ) {
+        await this.orderConsumerService.handleOrderTrackingConsumer(
+            action,
+            data
+        )
+
+        const { status } = data
+        console.log(status, action)
         switch (action) {
-            case RabbitQueueNames.orderCreated:
-                await this.orderConsumerService.handleOrderCreatedConsumer(data)
+            case RabbitQueueNames.OrderCreated:
+                await Container.get(RabbitMQManager).sendJobToQueue(
+                    RabbitQueueNames.ProductCheck,
+                    data
+                )
+                break
+            case RabbitQueueNames.ProductChecked:
+                await Container.get(RabbitMQManager).sendJobToQueue(
+                    RabbitQueueNames.OrderUpdate,
+                    data
+                )
+                break
+            case RabbitQueueNames.OrderUpdated:
+                switch (status) {
+                    case OrderStatusType.ProductCheckedSuccess:
+                        break
+                    case OrderStatusType.ProductCheckedFailed:
+                        data.status = OrderStatusType.OrderCanceled
+                        await Container.get(RabbitMQManager).sendJobToQueue(
+                            RabbitQueueNames.OrderUpdate,
+                            data
+                        )
+                        break
+                }
+
                 break
         }
     }

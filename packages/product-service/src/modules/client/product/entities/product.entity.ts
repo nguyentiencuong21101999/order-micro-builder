@@ -31,4 +31,14 @@ export class Product extends BaseEntities {
                   where: { ...conditions },
               })
     }
+
+    static async productUpdate(
+        data: Product | object,
+        conditions: Product | object,
+        manager?: EntityManager
+    ) {
+        return manager
+            ? await manager.update(Product, conditions, data)
+            : await this.update({ ...conditions }, data)
+    }
 }

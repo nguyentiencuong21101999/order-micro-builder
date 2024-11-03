@@ -18,6 +18,8 @@ import {
   type ServiceError,
   type UntypedServiceImplementation,
 } from "@grpc/grpc-js";
+import { Pagination } from "../../../base/dto";
+import { OrderEntityGrpc, ProductEntityGrpc } from "../../../base/entity";
 
 export const protobufPackage = "order.client.order";
 
@@ -41,6 +43,23 @@ export interface OrderCreateReqGrpc {
 
 export interface OrderCreateResGrpc {
   data: boolean;
+}
+
+/** Get Orders */
+export interface GetOrdersReqGrpc {
+  page: number;
+  limit: number;
+  userId: number;
+}
+
+export interface OrderReqGrpc {
+  order: OrderEntityGrpc | undefined;
+  products: ProductEntityGrpc[];
+}
+
+export interface GetOrdersResGrpc {
+  data: OrderReqGrpc[];
+  pagination: Pagination | undefined;
 }
 
 function createBaseOrderProductGrpc(): OrderProductGrpc {
@@ -367,6 +386,256 @@ export const OrderCreateResGrpc: MessageFns<OrderCreateResGrpc> = {
   },
 };
 
+function createBaseGetOrdersReqGrpc(): GetOrdersReqGrpc {
+  return { page: 0, limit: 0, userId: 0 };
+}
+
+export const GetOrdersReqGrpc: MessageFns<GetOrdersReqGrpc> = {
+  encode(message: GetOrdersReqGrpc, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.page !== 0) {
+      writer.uint32(8).int32(message.page);
+    }
+    if (message.limit !== 0) {
+      writer.uint32(16).int32(message.limit);
+    }
+    if (message.userId !== 0) {
+      writer.uint32(24).int32(message.userId);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetOrdersReqGrpc {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetOrdersReqGrpc();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.page = reader.int32();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.limit = reader.int32();
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.userId = reader.int32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetOrdersReqGrpc {
+    return {
+      page: isSet(object.page) ? globalThis.Number(object.page) : 0,
+      limit: isSet(object.limit) ? globalThis.Number(object.limit) : 0,
+      userId: isSet(object.userId) ? globalThis.Number(object.userId) : 0,
+    };
+  },
+
+  toJSON(message: GetOrdersReqGrpc): unknown {
+    const obj: any = {};
+    if (message.page !== 0) {
+      obj.page = Math.round(message.page);
+    }
+    if (message.limit !== 0) {
+      obj.limit = Math.round(message.limit);
+    }
+    if (message.userId !== 0) {
+      obj.userId = Math.round(message.userId);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetOrdersReqGrpc>, I>>(base?: I): GetOrdersReqGrpc {
+    return GetOrdersReqGrpc.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetOrdersReqGrpc>, I>>(object: I): GetOrdersReqGrpc {
+    const message = createBaseGetOrdersReqGrpc();
+    message.page = object.page ?? 0;
+    message.limit = object.limit ?? 0;
+    message.userId = object.userId ?? 0;
+    return message;
+  },
+};
+
+function createBaseOrderReqGrpc(): OrderReqGrpc {
+  return { order: undefined, products: [] };
+}
+
+export const OrderReqGrpc: MessageFns<OrderReqGrpc> = {
+  encode(message: OrderReqGrpc, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.order !== undefined) {
+      OrderEntityGrpc.encode(message.order, writer.uint32(10).fork()).join();
+    }
+    for (const v of message.products) {
+      ProductEntityGrpc.encode(v!, writer.uint32(18).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): OrderReqGrpc {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseOrderReqGrpc();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.order = OrderEntityGrpc.decode(reader, reader.uint32());
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.products.push(ProductEntityGrpc.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): OrderReqGrpc {
+    return {
+      order: isSet(object.order) ? OrderEntityGrpc.fromJSON(object.order) : undefined,
+      products: globalThis.Array.isArray(object?.products)
+        ? object.products.map((e: any) => ProductEntityGrpc.fromJSON(e))
+        : [],
+    };
+  },
+
+  toJSON(message: OrderReqGrpc): unknown {
+    const obj: any = {};
+    if (message.order !== undefined) {
+      obj.order = OrderEntityGrpc.toJSON(message.order);
+    }
+    if (message.products?.length) {
+      obj.products = message.products.map((e) => ProductEntityGrpc.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<OrderReqGrpc>, I>>(base?: I): OrderReqGrpc {
+    return OrderReqGrpc.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<OrderReqGrpc>, I>>(object: I): OrderReqGrpc {
+    const message = createBaseOrderReqGrpc();
+    message.order = (object.order !== undefined && object.order !== null)
+      ? OrderEntityGrpc.fromPartial(object.order)
+      : undefined;
+    message.products = object.products?.map((e) => ProductEntityGrpc.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseGetOrdersResGrpc(): GetOrdersResGrpc {
+  return { data: [], pagination: undefined };
+}
+
+export const GetOrdersResGrpc: MessageFns<GetOrdersResGrpc> = {
+  encode(message: GetOrdersResGrpc, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.data) {
+      OrderReqGrpc.encode(v!, writer.uint32(10).fork()).join();
+    }
+    if (message.pagination !== undefined) {
+      Pagination.encode(message.pagination, writer.uint32(18).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetOrdersResGrpc {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetOrdersResGrpc();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.data.push(OrderReqGrpc.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.pagination = Pagination.decode(reader, reader.uint32());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetOrdersResGrpc {
+    return {
+      data: globalThis.Array.isArray(object?.data) ? object.data.map((e: any) => OrderReqGrpc.fromJSON(e)) : [],
+      pagination: isSet(object.pagination) ? Pagination.fromJSON(object.pagination) : undefined,
+    };
+  },
+
+  toJSON(message: GetOrdersResGrpc): unknown {
+    const obj: any = {};
+    if (message.data?.length) {
+      obj.data = message.data.map((e) => OrderReqGrpc.toJSON(e));
+    }
+    if (message.pagination !== undefined) {
+      obj.pagination = Pagination.toJSON(message.pagination);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetOrdersResGrpc>, I>>(base?: I): GetOrdersResGrpc {
+    return GetOrdersResGrpc.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetOrdersResGrpc>, I>>(object: I): GetOrdersResGrpc {
+    const message = createBaseGetOrdersResGrpc();
+    message.data = object.data?.map((e) => OrderReqGrpc.fromPartial(e)) || [];
+    message.pagination = (object.pagination !== undefined && object.pagination !== null)
+      ? Pagination.fromPartial(object.pagination)
+      : undefined;
+    return message;
+  },
+};
+
 export type GrpcOrderService = typeof GrpcOrderService;
 export const GrpcOrderService = {
   create: {
@@ -378,10 +647,20 @@ export const GrpcOrderService = {
     responseSerialize: (value: OrderCreateResGrpc) => Buffer.from(OrderCreateResGrpc.encode(value).finish()),
     responseDeserialize: (value: Buffer) => OrderCreateResGrpc.decode(value),
   },
+  getOrders: {
+    path: "/order.client.order.GrpcOrder/getOrders",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetOrdersReqGrpc) => Buffer.from(GetOrdersReqGrpc.encode(value).finish()),
+    requestDeserialize: (value: Buffer) => GetOrdersReqGrpc.decode(value),
+    responseSerialize: (value: GetOrdersResGrpc) => Buffer.from(GetOrdersResGrpc.encode(value).finish()),
+    responseDeserialize: (value: Buffer) => GetOrdersResGrpc.decode(value),
+  },
 } as const;
 
 export interface GrpcOrderServer extends UntypedServiceImplementation {
   create: handleUnaryCall<OrderCreateReqGrpc, OrderCreateResGrpc>;
+  getOrders: handleUnaryCall<GetOrdersReqGrpc, GetOrdersResGrpc>;
 }
 
 export interface GrpcOrderClient extends Client {
@@ -399,6 +678,21 @@ export interface GrpcOrderClient extends Client {
     metadata: Metadata,
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: OrderCreateResGrpc) => void,
+  ): ClientUnaryCall;
+  getOrders(
+    request: GetOrdersReqGrpc,
+    callback: (error: ServiceError | null, response: GetOrdersResGrpc) => void,
+  ): ClientUnaryCall;
+  getOrders(
+    request: GetOrdersReqGrpc,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: GetOrdersResGrpc) => void,
+  ): ClientUnaryCall;
+  getOrders(
+    request: GetOrdersReqGrpc,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: GetOrdersResGrpc) => void,
   ): ClientUnaryCall;
 }
 

@@ -1,33 +1,31 @@
-import Container, { Service } from 'typedi'
-import { RabbitMQManager } from '../../../rabbit-mq/rabbit-mq'
-import { OrderTracking } from '../entities/order-tracking.entity'
-import { OrderCreateConsumerData } from './dtos/order-consumer.dto'
-import {
-    ContentByStatusOrderParse,
-    OrderStatusType,
-} from './types/order-consumer.type'
+import { OrderTrackingJobDataShared } from 'protobuf/shared/dtos/catalog.dto'
+import { Service } from 'typedi'
+import { getOrderError } from '../../../../utils/error'
 import { RabbitQueueNames } from '../../../rabbit-mq/types/queue-name.type'
+import { OrderTracking } from '../entities/order-tracking.entity'
+import { ContentByStatusOrderParse } from '../types/order-consumer.type'
 
 @Service()
 export class OrderConsumerService {
-    handleOrderCreatedConsumer = async (data: OrderCreateConsumerData) => {
-        const { orderId, status, userId } = data
+    handleOrderTrackingConsumer = async (
+        action: string,
+        data: OrderTrackingJobDataShared
+    ) => {
+        const { orderId, status, userId, error } = data
         const content = ContentByStatusOrderParse[status]
+        const { code: errorCode, message: errorMessage } = getOrderError(error)
 
-        await OrderTracking.orderTrackingCreate({
-            orderId,
-            userId,
-            status,
-            content,
-        })
-
-        switch (status) {
-            /* order created -> product check */
-            case OrderStatusType.orderCreated:
-                await Container.get(RabbitMQManager).sendJobToQueue(
-                    RabbitQueueNames.ProductCheck,
-                    data
-                )
+        switch (action) {
+            case RabbitQueueNames.OrderCreated:
+            case RabbitQueueNames.OrderUpdated:
+                await OrderTracking.orderTrackingCreate({
+                    orderId,
+                    userId,
+                    status,
+                    content,
+                    errorCode,
+                    errorMessage,
+                })
                 break
         }
     }

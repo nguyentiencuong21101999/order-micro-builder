@@ -1,3 +1,5 @@
 export enum RabbitQueueNames {
-    orderCreated = 'order-created',
+    OrderCreated = 'order-created',
+    OrderUpdate = 'order-update',
+    OrderUpdated = 'order-updated',
 }

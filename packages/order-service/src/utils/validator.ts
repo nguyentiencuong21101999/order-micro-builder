@@ -3,12 +3,15 @@ import {
     instanceToPlain,
     plainToInstance,
 } from 'class-transformer'
-import { validateOrReject, ValidationError } from 'class-validator'
+import {
+    validateOrReject,
+    validateSync,
+    ValidationError,
+} from 'class-validator'
 import { NextFunction, Response } from 'express'
 import { grpcReq } from '../base/base.grpc'
 import { DataRequest } from '../base/base.request'
 import { ErrorResp, Errors } from './error'
-import { splitChunks } from './helper'
 
 export const transformAndValidate = <T extends object>(
     cls: ClassConstructor<T>
@@ -59,27 +62,27 @@ export const transformAndValidateReqGrpc = async <Req extends Object>(
     }
 }
 
-export const transformAndValidateResGrpc = async <T>(
+export const handleErrorSync = (errs: ValidationError[]) => {
+    if (errs.length) throw Errors.BadRequest
+}
+
+export const transformAndValidateResGrpc = <T>(
     cls: ClassConstructor<T>,
     data: any
 ) => {
     if (!data) return new cls()
-
+    data[0].productId = null
     try {
         const res = plainToInstance(cls, data, {
             excludeExtraneousValues: true,
         })
         if (Array.isArray(res)) {
             if (!data?.length) return [] as T
-
-            const dataChunks = splitChunks(res, 100)
-            for (const dataChunk of dataChunks) {
-                await Promise.all(
-                    dataChunk.map((data: object) => validateOrReject(data))
-                )
-            }
+            res.forEach((data) => {
+                handleErrorSync(validateSync(data))
+            })
         } else {
-            await validateOrReject(res as object)
+            handleErrorSync(validateSync(res as object))
         }
 
         return res
@@ -87,7 +90,6 @@ export const transformAndValidateResGrpc = async <T>(
         return
     }
 }
-
 export const parseValidationError = (err: unknown) => {
     const validationErrs = err as ValidationError[]
     if (validationErrs.length == 0) {

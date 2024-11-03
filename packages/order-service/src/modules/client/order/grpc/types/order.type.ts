@@ -1,3 +1,3 @@
 export enum OrderStatusType {
-    orderCreated = 0,
+    OrderCreated = 0,
 }

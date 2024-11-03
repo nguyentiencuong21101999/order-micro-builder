@@ -1,0 +1,35 @@
+syntax = "proto3";
+package base.entity;
+
+option go_package = "base/entity";
+
+message ProductEntityGrpc{
+    int32 productId = 1;
+    string name = 2;
+    optional string imageUrl = 3;
+    double price = 4;
+    int32 quality = 5;
+    optional string note = 6;
+    optional string attribute = 7;
+    optional int32 createdBy = 1000;
+    optional string createdDate =2000;
+    optional int32 updatedBy = 3000;
+    optional string updatedDate = 4000;
+  }
+
+message OrderEntityGrpc{
+  string orderId = 1;
+  int32 userId = 2;
+  int32 totalQuality = 3;
+  string sumNote = 4;
+  int32 userAddressId = 5;
+  int32 totalProduct = 6;
+  double  totalPrice = 7;
+  int32 status = 8;
+  bool isPaid = 9;
+  double totalPaid = 10;
+  optional int32 createdBy = 1000;
+  optional string createdDate =2000;
+  optional int32 updatedBy = 3000;
+  optional string updatedDate = 4000;
+}

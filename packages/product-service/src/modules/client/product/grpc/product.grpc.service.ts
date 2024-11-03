@@ -1,8 +1,8 @@
-import { ProductGrpc } from 'protobuf/gen/ts/product-service/client/product/product'
+import { ProductEntityGrpc } from 'protobuf/gen/ts/base/entity'
 import { Service } from 'typedi'
 import { Pagination } from '../../../../utils/response'
 import { Product } from '../entities/product.entity'
-import { ProductDTO } from './dtos/product.dto'
+import { GetProductsRes } from './dtos/product.dto'
 
 @Service()
 export class ProductGrpcGrpcService {
@@ -12,8 +12,9 @@ export class ProductGrpcGrpcService {
             skip: pagination.getOffset(),
         })
         pagination.total = total
+
         return {
-            products: await ProductDTO.getData<ProductGrpc[]>(products),
+            products: GetProductsRes.getData<ProductEntityGrpc[]>(products),
             pagination,
         }
     }

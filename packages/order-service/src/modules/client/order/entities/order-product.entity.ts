@@ -5,7 +5,7 @@ import {
     PrimaryColumn,
     PrimaryGeneratedColumn,
 } from 'typeorm'
-import { BaseEntities, DataUpdateType } from '../../../../base/base.entities'
+import { BaseEntities, CustomTypeEntity } from '../../../../base/base.entities'
 
 @Entity('OrderProduct')
 export class OrderProduct extends BaseEntities {
@@ -40,7 +40,7 @@ export class OrderProduct extends BaseEntities {
     attributes: string
 
     static async orderProductCreate(
-        data: DataUpdateType<OrderProduct | object>,
+        data: CustomTypeEntity<OrderProduct | object>,
         manager?: EntityManager
     ) {
         return manager

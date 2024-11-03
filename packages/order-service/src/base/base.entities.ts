@@ -19,4 +19,4 @@ export enum BySortType {
     DESC = 'DESC',
 }
 
-export type DataUpdateType<T extends Object> = T | T[]
+export type CustomTypeEntity<T> = T | object

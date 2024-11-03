@@ -162,3 +162,13 @@ export const handleGrpcError = (err: Error, callback: grpcRes<any>) => {
         callback(new Error(JSON.stringify(errResp)))
     }
 }
+
+export const getOrderError = (err: ErrorResp) => {
+    if (!err) return new ErrorResp(undefined, undefined, undefined)
+
+    return new ErrorResp(
+        err?.code || Errors.BadRequest.code,
+        err?.message || JSON.stringify(err),
+        err?.status || Errors.BadRequest.status
+    )
+}

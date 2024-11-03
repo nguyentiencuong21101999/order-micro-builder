@@ -1,4 +1,6 @@
 import {
+    GetOrdersReqGrpc,
+    GetOrdersResGrpc,
     GrpcOrderServer,
     GrpcOrderService,
     OrderCreateReqGrpc,
@@ -8,7 +10,7 @@ import { Inject, Service } from 'typedi'
 import { GrpcServiceGroup } from '../../../../app'
 import { grpcReq, grpcRes } from '../../../../base/base.grpc'
 import { handleGrpcError } from '../../../../utils/error'
-import { ResponseWrapper } from '../../../../utils/response'
+import { Pagination, ResponseWrapper } from '../../../../utils/response'
 import { OrderGrpcService } from './order.service'
 
 @Service()
@@ -23,6 +25,22 @@ export class OrderGrpcController implements GrpcOrderServer {
         try {
             await this.orderService.create(request)
             callback(null, new ResponseWrapper(true))
+        } catch (err) {
+            handleGrpcError(err, callback)
+        }
+    }
+
+    getOrders = async (
+        req: grpcReq<GetOrdersReqGrpc>,
+        callback: grpcRes<GetOrdersResGrpc>
+    ) => {
+        try {
+            const res = await this.orderService.getOrders(
+                req.request,
+                Pagination.fromGrpc(req)
+            )
+            console.log(res.data)
+            callback(null, res)
         } catch (err) {
             handleGrpcError(err, callback)
         }

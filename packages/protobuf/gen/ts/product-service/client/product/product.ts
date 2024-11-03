@@ -18,128 +18,20 @@ import {
   type ServiceError,
   type UntypedServiceImplementation,
 } from "@grpc/grpc-js";
+import { Pagination } from "../../../base/dto";
+import { ProductEntityGrpc } from "../../../base/entity";
 
 export const protobufPackage = "productProtobuf";
-
-export interface PaginationGrpc {
-  page?: number | undefined;
-  limit?: number | undefined;
-  total?: number | undefined;
-}
 
 export interface GetProductsReqGrpc {
   page?: number | undefined;
   limit?: number | undefined;
 }
 
-export interface ProductGrpc {
-  productId: number;
-  name: string;
-  imageUrl?: string | undefined;
-  price: number;
-  quality: number;
-  createdBy?: number | undefined;
-  createdDate?: string | undefined;
-  updatedBy?: number | undefined;
-  updatedDate?: string | undefined;
-}
-
 export interface ProductResGrpc {
-  data: ProductGrpc[];
-  pagination: PaginationGrpc | undefined;
+  data: ProductEntityGrpc[];
+  pagination: Pagination | undefined;
 }
-
-function createBasePaginationGrpc(): PaginationGrpc {
-  return { page: undefined, limit: undefined, total: undefined };
-}
-
-export const PaginationGrpc: MessageFns<PaginationGrpc> = {
-  encode(message: PaginationGrpc, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.page !== undefined) {
-      writer.uint32(8).int32(message.page);
-    }
-    if (message.limit !== undefined) {
-      writer.uint32(16).int32(message.limit);
-    }
-    if (message.total !== undefined) {
-      writer.uint32(24).int32(message.total);
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): PaginationGrpc {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBasePaginationGrpc();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 8) {
-            break;
-          }
-
-          message.page = reader.int32();
-          continue;
-        }
-        case 2: {
-          if (tag !== 16) {
-            break;
-          }
-
-          message.limit = reader.int32();
-          continue;
-        }
-        case 3: {
-          if (tag !== 24) {
-            break;
-          }
-
-          message.total = reader.int32();
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): PaginationGrpc {
-    return {
-      page: isSet(object.page) ? globalThis.Number(object.page) : undefined,
-      limit: isSet(object.limit) ? globalThis.Number(object.limit) : undefined,
-      total: isSet(object.total) ? globalThis.Number(object.total) : undefined,
-    };
-  },
-
-  toJSON(message: PaginationGrpc): unknown {
-    const obj: any = {};
-    if (message.page !== undefined) {
-      obj.page = Math.round(message.page);
-    }
-    if (message.limit !== undefined) {
-      obj.limit = Math.round(message.limit);
-    }
-    if (message.total !== undefined) {
-      obj.total = Math.round(message.total);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<PaginationGrpc>, I>>(base?: I): PaginationGrpc {
-    return PaginationGrpc.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<PaginationGrpc>, I>>(object: I): PaginationGrpc {
-    const message = createBasePaginationGrpc();
-    message.page = object.page ?? undefined;
-    message.limit = object.limit ?? undefined;
-    message.total = object.total ?? undefined;
-    return message;
-  },
-};
 
 function createBaseGetProductsReqGrpc(): GetProductsReqGrpc {
   return { page: undefined, limit: undefined };
@@ -217,204 +109,6 @@ export const GetProductsReqGrpc: MessageFns<GetProductsReqGrpc> = {
   },
 };
 
-function createBaseProductGrpc(): ProductGrpc {
-  return {
-    productId: 0,
-    name: "",
-    imageUrl: undefined,
-    price: 0,
-    quality: 0,
-    createdBy: undefined,
-    createdDate: undefined,
-    updatedBy: undefined,
-    updatedDate: undefined,
-  };
-}
-
-export const ProductGrpc: MessageFns<ProductGrpc> = {
-  encode(message: ProductGrpc, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.productId !== 0) {
-      writer.uint32(8).int32(message.productId);
-    }
-    if (message.name !== "") {
-      writer.uint32(18).string(message.name);
-    }
-    if (message.imageUrl !== undefined) {
-      writer.uint32(26).string(message.imageUrl);
-    }
-    if (message.price !== 0) {
-      writer.uint32(33).double(message.price);
-    }
-    if (message.quality !== 0) {
-      writer.uint32(40).int32(message.quality);
-    }
-    if (message.createdBy !== undefined) {
-      writer.uint32(8000).int32(message.createdBy);
-    }
-    if (message.createdDate !== undefined) {
-      writer.uint32(16002).string(message.createdDate);
-    }
-    if (message.updatedBy !== undefined) {
-      writer.uint32(24000).int32(message.updatedBy);
-    }
-    if (message.updatedDate !== undefined) {
-      writer.uint32(32002).string(message.updatedDate);
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): ProductGrpc {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseProductGrpc();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 8) {
-            break;
-          }
-
-          message.productId = reader.int32();
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.name = reader.string();
-          continue;
-        }
-        case 3: {
-          if (tag !== 26) {
-            break;
-          }
-
-          message.imageUrl = reader.string();
-          continue;
-        }
-        case 4: {
-          if (tag !== 33) {
-            break;
-          }
-
-          message.price = reader.double();
-          continue;
-        }
-        case 5: {
-          if (tag !== 40) {
-            break;
-          }
-
-          message.quality = reader.int32();
-          continue;
-        }
-        case 1000: {
-          if (tag !== 8000) {
-            break;
-          }
-
-          message.createdBy = reader.int32();
-          continue;
-        }
-        case 2000: {
-          if (tag !== 16002) {
-            break;
-          }
-
-          message.createdDate = reader.string();
-          continue;
-        }
-        case 3000: {
-          if (tag !== 24000) {
-            break;
-          }
-
-          message.updatedBy = reader.int32();
-          continue;
-        }
-        case 4000: {
-          if (tag !== 32002) {
-            break;
-          }
-
-          message.updatedDate = reader.string();
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): ProductGrpc {
-    return {
-      productId: isSet(object.productId) ? globalThis.Number(object.productId) : 0,
-      name: isSet(object.name) ? globalThis.String(object.name) : "",
-      imageUrl: isSet(object.imageUrl) ? globalThis.String(object.imageUrl) : undefined,
-      price: isSet(object.price) ? globalThis.Number(object.price) : 0,
-      quality: isSet(object.quality) ? globalThis.Number(object.quality) : 0,
-      createdBy: isSet(object.createdBy) ? globalThis.Number(object.createdBy) : undefined,
-      createdDate: isSet(object.createdDate) ? globalThis.String(object.createdDate) : undefined,
-      updatedBy: isSet(object.updatedBy) ? globalThis.Number(object.updatedBy) : undefined,
-      updatedDate: isSet(object.updatedDate) ? globalThis.String(object.updatedDate) : undefined,
-    };
-  },
-
-  toJSON(message: ProductGrpc): unknown {
-    const obj: any = {};
-    if (message.productId !== 0) {
-      obj.productId = Math.round(message.productId);
-    }
-    if (message.name !== "") {
-      obj.name = message.name;
-    }
-    if (message.imageUrl !== undefined) {
-      obj.imageUrl = message.imageUrl;
-    }
-    if (message.price !== 0) {
-      obj.price = message.price;
-    }
-    if (message.quality !== 0) {
-      obj.quality = Math.round(message.quality);
-    }
-    if (message.createdBy !== undefined) {
-      obj.createdBy = Math.round(message.createdBy);
-    }
-    if (message.createdDate !== undefined) {
-      obj.createdDate = message.createdDate;
-    }
-    if (message.updatedBy !== undefined) {
-      obj.updatedBy = Math.round(message.updatedBy);
-    }
-    if (message.updatedDate !== undefined) {
-      obj.updatedDate = message.updatedDate;
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<ProductGrpc>, I>>(base?: I): ProductGrpc {
-    return ProductGrpc.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<ProductGrpc>, I>>(object: I): ProductGrpc {
-    const message = createBaseProductGrpc();
-    message.productId = object.productId ?? 0;
-    message.name = object.name ?? "";
-    message.imageUrl = object.imageUrl ?? undefined;
-    message.price = object.price ?? 0;
-    message.quality = object.quality ?? 0;
-    message.createdBy = object.createdBy ?? undefined;
-    message.createdDate = object.createdDate ?? undefined;
-    message.updatedBy = object.updatedBy ?? undefined;
-    message.updatedDate = object.updatedDate ?? undefined;
-    return message;
-  },
-};
-
 function createBaseProductResGrpc(): ProductResGrpc {
   return { data: [], pagination: undefined };
 }
@@ -422,10 +116,10 @@ function createBaseProductResGrpc(): ProductResGrpc {
 export const ProductResGrpc: MessageFns<ProductResGrpc> = {
   encode(message: ProductResGrpc, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     for (const v of message.data) {
-      ProductGrpc.encode(v!, writer.uint32(10).fork()).join();
+      ProductEntityGrpc.encode(v!, writer.uint32(10).fork()).join();
     }
     if (message.pagination !== undefined) {
-      PaginationGrpc.encode(message.pagination, writer.uint32(18).fork()).join();
+      Pagination.encode(message.pagination, writer.uint32(18).fork()).join();
     }
     return writer;
   },
@@ -442,7 +136,7 @@ export const ProductResGrpc: MessageFns<ProductResGrpc> = {
             break;
           }
 
-          message.data.push(ProductGrpc.decode(reader, reader.uint32()));
+          message.data.push(ProductEntityGrpc.decode(reader, reader.uint32()));
           continue;
         }
         case 2: {
@@ -450,7 +144,7 @@ export const ProductResGrpc: MessageFns<ProductResGrpc> = {
             break;
           }
 
-          message.pagination = PaginationGrpc.decode(reader, reader.uint32());
+          message.pagination = Pagination.decode(reader, reader.uint32());
           continue;
         }
       }
@@ -464,18 +158,18 @@ export const ProductResGrpc: MessageFns<ProductResGrpc> = {
 
   fromJSON(object: any): ProductResGrpc {
     return {
-      data: globalThis.Array.isArray(object?.data) ? object.data.map((e: any) => ProductGrpc.fromJSON(e)) : [],
-      pagination: isSet(object.pagination) ? PaginationGrpc.fromJSON(object.pagination) : undefined,
+      data: globalThis.Array.isArray(object?.data) ? object.data.map((e: any) => ProductEntityGrpc.fromJSON(e)) : [],
+      pagination: isSet(object.pagination) ? Pagination.fromJSON(object.pagination) : undefined,
     };
   },
 
   toJSON(message: ProductResGrpc): unknown {
     const obj: any = {};
     if (message.data?.length) {
-      obj.data = message.data.map((e) => ProductGrpc.toJSON(e));
+      obj.data = message.data.map((e) => ProductEntityGrpc.toJSON(e));
     }
     if (message.pagination !== undefined) {
-      obj.pagination = PaginationGrpc.toJSON(message.pagination);
+      obj.pagination = Pagination.toJSON(message.pagination);
     }
     return obj;
   },
@@ -485,9 +179,9 @@ export const ProductResGrpc: MessageFns<ProductResGrpc> = {
   },
   fromPartial<I extends Exact<DeepPartial<ProductResGrpc>, I>>(object: I): ProductResGrpc {
     const message = createBaseProductResGrpc();
-    message.data = object.data?.map((e) => ProductGrpc.fromPartial(e)) || [];
+    message.data = object.data?.map((e) => ProductEntityGrpc.fromPartial(e)) || [];
     message.pagination = (object.pagination !== undefined && object.pagination !== null)
-      ? PaginationGrpc.fromPartial(object.pagination)
+      ? Pagination.fromPartial(object.pagination)
       : undefined;
     return message;
   },

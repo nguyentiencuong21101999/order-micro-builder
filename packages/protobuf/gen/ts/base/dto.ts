@@ -2,25 +2,25 @@
 // versions:
 //   protoc-gen-ts_proto  v2.2.2
 //   protoc               unknown
-// source: base/response.proto
+// source: base/dto.proto
 
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 
-export const protobufPackage = "baseProtobuf";
+export const protobufPackage = "base.dto";
 
-export interface PaginationGrpc {
+export interface Pagination {
   page?: number | undefined;
   limit?: number | undefined;
   total?: number | undefined;
 }
 
-function createBasePaginationGrpc(): PaginationGrpc {
+function createBasePagination(): Pagination {
   return { page: undefined, limit: undefined, total: undefined };
 }
 
-export const PaginationGrpc: MessageFns<PaginationGrpc> = {
-  encode(message: PaginationGrpc, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const Pagination: MessageFns<Pagination> = {
+  encode(message: Pagination, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.page !== undefined) {
       writer.uint32(8).int32(message.page);
     }
@@ -33,10 +33,10 @@ export const PaginationGrpc: MessageFns<PaginationGrpc> = {
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): PaginationGrpc {
+  decode(input: BinaryReader | Uint8Array, length?: number): Pagination {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBasePaginationGrpc();
+    const message = createBasePagination();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -73,7 +73,7 @@ export const PaginationGrpc: MessageFns<PaginationGrpc> = {
     return message;
   },
 
-  fromJSON(object: any): PaginationGrpc {
+  fromJSON(object: any): Pagination {
     return {
       page: isSet(object.page) ? globalThis.Number(object.page) : undefined,
       limit: isSet(object.limit) ? globalThis.Number(object.limit) : undefined,
@@ -81,7 +81,7 @@ export const PaginationGrpc: MessageFns<PaginationGrpc> = {
     };
   },
 
-  toJSON(message: PaginationGrpc): unknown {
+  toJSON(message: Pagination): unknown {
     const obj: any = {};
     if (message.page !== undefined) {
       obj.page = Math.round(message.page);
@@ -95,11 +95,11 @@ export const PaginationGrpc: MessageFns<PaginationGrpc> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<PaginationGrpc>, I>>(base?: I): PaginationGrpc {
-    return PaginationGrpc.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<Pagination>, I>>(base?: I): Pagination {
+    return Pagination.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<PaginationGrpc>, I>>(object: I): PaginationGrpc {
-    const message = createBasePaginationGrpc();
+  fromPartial<I extends Exact<DeepPartial<Pagination>, I>>(object: I): Pagination {
+    const message = createBasePagination();
     message.page = object.page ?? undefined;
     message.limit = object.limit ?? undefined;
     message.total = object.total ?? undefined;
