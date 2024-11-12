@@ -1,7 +1,7 @@
 import { GrpcProductClient } from 'protobuf/gen/ts/product-service/client/product/product'
 import { Inject, Service } from 'typedi'
 import { callGrpc } from '../../../base/base.grpc'
-import { GrpcService } from '../../grpc-service/grpc-service'
+import { GrpcService } from '../../grpc-server/grpc-service'
 import { GetProductsRequestDTO } from './dtos/product.dto'
 
 @Service()

@@ -39,7 +39,7 @@ export class OrderGrpcController implements GrpcOrderServer {
                 req.request,
                 Pagination.fromGrpc(req)
             )
-            console.log(res.data)
+
             callback(null, res)
         } catch (err) {
             handleGrpcError(err, callback)

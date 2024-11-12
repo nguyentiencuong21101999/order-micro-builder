@@ -1,0 +1,4 @@
+root = "."
+build = "go build -o ./tmp/main ."
+run = "./tmp/main"
+include = ["*.go", "*.html", "*.css"]

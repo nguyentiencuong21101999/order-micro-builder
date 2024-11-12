@@ -6,4 +6,7 @@ export class GrpcConfig {
 
     @IsString()
     productServicePort: string
+
+    @IsString()
+    paymentServicePort: string
 }

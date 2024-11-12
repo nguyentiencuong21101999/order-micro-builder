@@ -1,0 +1,25 @@
+syntax = "proto3";
+package payment_protobuf;
+
+option go_package = "/payment_pb";
+
+
+import "base/dto.proto";
+import "base/entity.proto";
+
+
+message GetUserWalletReqGrpc{
+  int32 userId = 1;
+}
+
+message GetUserWalletResGrpc{
+  int32 userId = 1;
+  double balance = 2;
+}
+
+service GrpcPayment {
+  rpc GetUserWallet(GetUserWalletReqGrpc) returns (GetUserWalletResGrpc) {};
+}
+
+
+

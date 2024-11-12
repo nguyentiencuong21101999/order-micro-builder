@@ -1,7 +1,10 @@
 syntax = "proto3";
 package base.dto;
-
-option go_package = "base/response";
+/* 
+protobuf => module => gomod
+/gen/go/base => uri defined
+*/
+option go_package = "protobuf-service/gen/go/base";
 
 message Pagination{
   optional int32 page = 1;

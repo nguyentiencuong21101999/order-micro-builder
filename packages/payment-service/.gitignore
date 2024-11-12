@@ -1,0 +1,62 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.cover
+
+# Configuration file for liteide project
+*.pro.user
+*.prv
+
+# Output of the go build tool
+/_obj
+/_test
+/test.out
+/build/
+
+# Configuration file for Eclipse (Goclipse)
+.settings/
+
+# Configuration file for VSCode
+.vscode/
+
+# IDE-specific files
+.idea/
+*.iml
+
+# Directory for test binary, used by "go test -c"
+_testmain.go
+
+# Node modules (if you have a frontend code in the same repo)
+node_modules/
+
+# Dependency directories (remove the comment below if you use Go modules)
+vendor/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# Editor backup files
+*~
+
+# Env files
+.env
+.env.local
+.env.test
+.env.production
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+
+# Ignore build output
+bin/

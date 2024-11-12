@@ -1,6 +1,6 @@
 import { Inject, Service } from 'typedi'
 import { callGrpc } from '../../../base/base.grpc'
-import { GrpcService } from '../../grpc-service/grpc-service'
+import { GrpcService } from '../../grpc-server/grpc-service'
 import { OrderCreateReq } from '../dtos/create.dto'
 
 @Service()

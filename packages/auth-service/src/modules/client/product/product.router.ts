@@ -19,6 +19,7 @@ export class ProductRouter implements AppRoute {
     private initRouter() {
         this.router.get(
             '/',
+            this.authMiddleware.authorization,
             transformAndValidate(GetProductsRequestDTO),
             this.productController.getProducts.bind(this.productController)
         )
