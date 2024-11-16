@@ -24,13 +24,57 @@ var (
 		Message: "Internal Server Error",
 		Status:  500,
 	}
+
+	PaymentNotFound = &ErrorResp{
+		Code:    "err.paymentNotFound",
+		Message: "Payment not found",
+		Status:  400,
+	}
+
+	ProductNotFound = &ErrorResp{
+		Code:    "err.productNotFound",
+		Message: "Product not found",
+		Status:  400,
+	}
+
+	BalanceNotEnough = &ErrorResp{
+		Code:    "err.balanceNotEnough",
+		Message: "Balance not enough",
+		Status:  400,
+	}
 )
 
 func (e *ErrorResp) Error() string {
 	return fmt.Sprintf("Code: %s, Message: %s, Status: %d", e.Code, e.Message, e.Status)
 }
 
+func HandleError(err error) *ErrorResp {
+	if err == nil {
+		return nil
+	}
+
+	switch e := err.(type) {
+	case *ErrorResp:
+		return e
+
+	default:
+		log.Printf("Error: %v", err)
+
+		errResp := ErrorResp{
+			Code:    InternalServerError.Code,
+			Message: fmt.Sprintf("%v", err),
+			Status:  InternalServerError.Status,
+		}
+
+		return &errResp
+	}
+}
+
 func HandleGrpcError(err error) error {
+	if err == nil {
+		return nil
+	}
+
 	switch e := err.(type) {
 	case *ErrorResp: // Similar to checking instance of ErrorResp in JS
 		// Merge the custom error response

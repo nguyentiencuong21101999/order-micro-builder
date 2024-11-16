@@ -3,9 +3,9 @@ export enum OrderStatusType {
     ProductCheckedSuccess = 1,
     ProductCheckedFailed = 2,
     PaymentCheckedSuccess = 3,
-    PaymentCheckedFailed = 5,
-    OrderCanceled = 6,
-    OrderSucceed = 7,
+    PaymentCheckedFailed = 4,
+    OrderCanceled = 5,
+    OrderSucceed = 6,
     ProductCanceledSuccess = 100,
     ProductCanceledFailed = 101,
 }

@@ -2,3 +2,6 @@ root = "."
 build = "go build -o ./tmp/main ."
 run = "./tmp/main"
 include = ["*.go", "*.html", "*.css"]
+log = true
+show_err = true 
+stop_on_error = true

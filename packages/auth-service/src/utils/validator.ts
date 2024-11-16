@@ -20,7 +20,6 @@ export const transformAndValidate = <T extends object>(
                 ...{ userId: req?.userId },
             }
 
-            console.log(data)
             // transform data to target instance
             req.data = plainToInstance(cls, data, {
                 excludeExtraneousValues: true,

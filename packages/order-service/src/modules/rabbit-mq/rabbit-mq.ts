@@ -30,7 +30,6 @@ export class RabbitMQManager {
     }
 
     sendJobToQueue = async (queueName: string, data: any) => {
-        console.log(data)
         await this.rabbitProducer.produce(this.conn, queueName, data)
     }
 }

@@ -10,7 +10,6 @@ export function callGrpc<Req, Res>(
 ) {
     return new Promise<ResponseWrapper>((resolve, reject) => {
         grpcMethod(payloadReq, (err, result) => {
-            console.log(err)
             if (err) {
                 const errRes = JSON.parse(err?.details)
                 reject(

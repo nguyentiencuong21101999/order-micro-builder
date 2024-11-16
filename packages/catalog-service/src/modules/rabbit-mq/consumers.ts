@@ -29,6 +29,8 @@ export class RabbitConsumer<T extends Message> implements IConsumer<T> {
             RabbitQueueNames.OrderCreated,
             RabbitQueueNames.ProductChecked,
             RabbitQueueNames.OrderUpdated,
+            RabbitQueueNames.PaymentChecked,
+            RabbitQueueNames.ProductCanceled,
         ]
         await Promise.all(
             consumers.map(async (queueName) => {
@@ -52,6 +54,11 @@ export class RabbitConsumer<T extends Message> implements IConsumer<T> {
         })
     }
 
+    /*
+        OrderCreated -> ProductCheck
+        ProductChecked -> OrderUpdate - ProductCheckedSuccess  -> PaymentCheck -> PaymentChecked -> OrderUpdate - PaymentCheckedSuccess -> OrderUpdate - OrderSucceed ( End )
+                                      - ProductCheckedFailed  -> OrderCanceled ( End )                          |- PaymentCheckedFailed 
+    */
     async consumerWithHandle(
         action: string,
         data: OrderTrackingJobDataShared | any
@@ -62,7 +69,6 @@ export class RabbitConsumer<T extends Message> implements IConsumer<T> {
         )
 
         const { status } = data
-        console.log(status, action)
         switch (action) {
             case RabbitQueueNames.OrderCreated:
                 await Container.get(RabbitMQManager).sendJobToQueue(
@@ -71,14 +77,22 @@ export class RabbitConsumer<T extends Message> implements IConsumer<T> {
                 )
                 break
             case RabbitQueueNames.ProductChecked:
+            case RabbitQueueNames.PaymentChecked:
+            case RabbitQueueNames.ProductCanceled:
                 await Container.get(RabbitMQManager).sendJobToQueue(
                     RabbitQueueNames.OrderUpdate,
                     data
                 )
                 break
+
             case RabbitQueueNames.OrderUpdated:
                 switch (status) {
+                    /* Product checked */
                     case OrderStatusType.ProductCheckedSuccess:
+                        await Container.get(RabbitMQManager).sendJobToQueue(
+                            RabbitQueueNames.PaymentCheck,
+                            data
+                        )
                         break
                     case OrderStatusType.ProductCheckedFailed:
                         data.status = OrderStatusType.OrderCanceled
@@ -86,6 +100,36 @@ export class RabbitConsumer<T extends Message> implements IConsumer<T> {
                             RabbitQueueNames.OrderUpdate,
                             data
                         )
+                        break
+
+                    /*Payment checked*/
+
+                    // Finish order
+                    case OrderStatusType.PaymentCheckedSuccess:
+                        data.status = OrderStatusType.OrderSucceed
+                        await Container.get(RabbitMQManager).sendJobToQueue(
+                            RabbitQueueNames.OrderUpdate,
+                            data
+                        )
+                        break
+
+                    // rollback order
+                    case OrderStatusType.PaymentCheckedFailed:
+                        await Container.get(RabbitMQManager).sendJobToQueue(
+                            RabbitQueueNames.ProductCancel,
+                            data
+                        )
+                        break
+
+                    /* Order canceled */
+                    case OrderStatusType.ProductCanceledSuccess:
+                        data.status = OrderStatusType.OrderCanceled
+                        await Container.get(RabbitMQManager).sendJobToQueue(
+                            RabbitQueueNames.OrderUpdate,
+                            data
+                        )
+                        break
+                    case OrderStatusType.ProductCanceledFailed:
                         break
                 }
 

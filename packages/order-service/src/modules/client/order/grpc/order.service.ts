@@ -22,6 +22,7 @@ export class OrderGrpcService {
             totalPrice = 0
         const { userId, userAddressId, sumNote, products } = data
         const status = OrderStatusType.OrderCreated
+        const totalProduct = products.length
 
         products.forEach((product) => {
             const { price, quality } = product
@@ -38,6 +39,7 @@ export class OrderGrpcService {
                     userAddressId,
                     totalPrice,
                     totalQuality,
+                    totalProduct,
                     sumNote,
                     status,
                 },

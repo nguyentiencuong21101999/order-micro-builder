@@ -9,9 +9,11 @@ import (
 
 // Config : struct
 type Config struct {
-	Environment string `env:"ENVIRONMENT"`
-	Port        int    `env:"PORT"`
-	DbUri       string `env:"DB_URI"`
+	Environment string `env:"ENVIRONMENT" json:"environment"`
+	Port        int    `env:"PORT" json:"port"`
+	DbUri       string `env:"DB_URI" json:"dbUri"`
+	RabbitMqUri string `env:"RABBITMQ_URI" json:"rabbitMqUri"`
+	GrpcPort    string `env:"GRPC_PORT" json:"grpcPort"`
 }
 
 var (

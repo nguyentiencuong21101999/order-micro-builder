@@ -24,7 +24,10 @@ export class RabbitConsumer<T extends Message> implements IConsumer<T> {
     ) {}
 
     async setupConsumers(channel: amqplib.Channel) {
-        const consumers = [RabbitQueueNames.ProductCheck]
+        const consumers = [
+            RabbitQueueNames.ProductCheck,
+            RabbitQueueNames.ProductCancel,
+        ]
         await Promise.all(
             consumers.map(async (queueName) => {
                 await this.createConsumer(channel, queueName)
@@ -51,6 +54,10 @@ export class RabbitConsumer<T extends Message> implements IConsumer<T> {
         switch (action) {
             case RabbitQueueNames.ProductCheck:
                 await this.productConsumerService.checkValidProducts(data)
+                break
+
+            case RabbitQueueNames.ProductCancel:
+                await this.productConsumerService.handleProductCancel(data)
                 break
         }
     }

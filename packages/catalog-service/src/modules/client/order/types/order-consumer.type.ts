@@ -18,4 +18,6 @@ export const ContentByStatusOrderParse = {
     [OrderStatusType.PaymentCheckedFailed]: 'Đơn hàng thanh toán thất bại',
     [OrderStatusType.OrderCanceled]: 'Đơn hàng đã huỷ',
     [OrderStatusType.OrderSucceed]: 'Đơn hàng thành công',
+    [OrderStatusType.ProductCanceledSuccess]: 'Sản phần được hoàn thành công',
+    [OrderStatusType.ProductCanceledFailed]: 'Sản phần được hoàn thất bại',
 }

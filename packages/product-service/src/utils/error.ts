@@ -41,14 +41,22 @@ export const Errors = {
         'error.invalidFileType',
         'Invalid file type.'
     ),
-    PriceInvalid: new ErrorResp('error.priceInvalid', 'Price Invalid .'),
+    PriceInvalid: new ErrorResp('error.priceInvalid', 'Price Invalid'),
     QualityNotEnough: new ErrorResp(
         'error.qualityNotEnough',
-        'Quality not enough .'
+        'Quality not enough'
     ),
     ProductNotFound: new ErrorResp(
         'error.productNotFound',
         'Product not found.'
+    ),
+    ProductIsNotEqual: new ErrorResp(
+        'error.productIsNotEqual',
+        'Product is not equal.'
+    ),
+    ProductCancelInvalid: new ErrorResp(
+        'error.productCancelInvalid',
+        'Product cancel invalid.'
     ),
 }
 

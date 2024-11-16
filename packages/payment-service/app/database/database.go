@@ -48,12 +48,14 @@ func (d *Database) WithTransaction(callback func(*gorm.DB) error) error {
 
 	if err := callback(tx); err != nil {
 		tx.Rollback()
+		zap.L().Info("Rollback", zap.Any("----", err))
 		return err
 	}
 
 	if err := tx.Commit().Error; err != nil {
 		return err
 	}
+	zap.L().Info("Commit")
 
 	return nil
 }

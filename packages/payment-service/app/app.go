@@ -5,6 +5,7 @@ import (
 	"payment-service/app/config"
 	"payment-service/app/database"
 	"payment-service/app/modules"
+	"payment-service/app/pkg"
 
 	"go.uber.org/dig"
 )
@@ -31,6 +32,11 @@ func BuildContainer(conf *config.Config) *dig.Container {
 	err = database.Inject(container)
 	if err != nil {
 		log.Fatalf("Failed to inject database instance %v", err)
+	}
+
+	err = pkg.Inject(container)
+	if err != nil {
+		log.Fatalf("Failed to inject pkg instance %v", err)
 	}
 
 	return container

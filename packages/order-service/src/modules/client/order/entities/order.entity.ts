@@ -28,6 +28,9 @@ export class Order extends BaseEntities {
     @Column({ type: 'varchar' })
     sumNote: string
 
+    @Column({ type: 'int', default: 0 })
+    totalProduct: number
+
     @Column({ type: 'int' })
     userAddressId: number
 

@@ -2,8 +2,8 @@ import amqplib, { Message } from 'amqplib'
 import Container, { Inject, Service } from 'typedi'
 
 import { OrderConsumerService } from '../client/order/consumer/product.consumer.service'
-import { RabbitQueueNames } from './types/queue-name.type'
 import { RabbitMQManager } from './rabbit-mq'
+import { RabbitQueueNames } from './types/queue-name.type'
 
 export interface IConsumer<T extends Message> {
     createConsumer(
@@ -52,10 +52,17 @@ export class RabbitConsumer<T extends Message> implements IConsumer<T> {
         switch (action) {
             case RabbitQueueNames.OrderUpdate:
                 await this.orderConsumerService.handleOrderUpdate(data)
-                await Container.get(RabbitMQManager).sendJobToQueue(
-                    RabbitQueueNames.OrderUpdated,
-                    data
-                )
+                switch (data.status) {
+                    // case OrderStatusType.OrderCanceled:
+                    // case OrderStatusType.OrderSucceed:
+                    //     break
+                    default:
+                        await Container.get(RabbitMQManager).sendJobToQueue(
+                            RabbitQueueNames.OrderUpdated,
+                            data
+                        )
+                        break
+                }
                 break
         }
     }

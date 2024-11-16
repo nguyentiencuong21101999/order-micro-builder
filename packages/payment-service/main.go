@@ -6,6 +6,7 @@ import (
 	"payment-service/app"
 	"payment-service/app/config"
 	payment_grpc "payment-service/app/modules/client/payment/grpc"
+	"payment-service/app/pkg/rabbit-mq/consumer"
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -45,9 +46,16 @@ func main() {
 	defer logger.Sync()
 
 	container := app.BuildContainer(conf)
-	err = container.Invoke(func(paymentSvr *payment_grpc.PaymentServerGrpc) error {
-		listen, err := net.Listen("tcp", "0.0.0.0:1008")
-		logger.Info("Listen at: ", zap.Any("port", "0.0.0.0:1008"))
+	err = container.Invoke(func(paymentSvr *payment_grpc.PaymentServerGrpc, consumerRabbitMq consumer.IConsumerRabbitMQ) error {
+
+		go consumerRabbitMq.Consume()
+		if err != nil {
+			logger.Fatal("gRPC server failed", zap.Error(err))
+			return err
+		}
+
+		listen, err := net.Listen("tcp", conf.GrpcPort)
+		logger.Info("Listen at: ", zap.Any("GrpcPort", conf.GrpcPort))
 		if err != nil {
 			logger.Error("failed to listen: ", zap.Error(err))
 			return err
